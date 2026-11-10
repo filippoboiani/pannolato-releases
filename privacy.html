@@ -27,7 +27,8 @@
     <li>macOS: <code>~/Library/Application Support/Pannolato</code></li>
     <li>Windows: <code>%APPDATA%\Pannolato</code></li>
   </ul>
-  <p>We do not receive this data. The app has no account, no analytics and no tracking. To delete this data, delete the folder.</p>
+  <p>The app also keeps two dates, the trial start and the last time it ran, in your system settings (macOS user defaults, Windows registry), so that a reinstall does not restart the trial. They never leave your computer.</p>
+  <p>We do not receive this data. The app has no account and no tracking. The only statistic is the anonymous daily ping in section 3, and only if you turn it on. To delete this data, delete the folder.</p>
   <p>If you connect Strava, the app sends the rides you choose from your computer directly to Strava, with the Strava API keys you enter. The Garmin button opens the Garmin Connect import page, where you upload the file yourself. Strava and Garmin process this data under their own privacy policies.</p>
 
   <h2>3. Data we process</h2>
@@ -54,6 +55,12 @@
         <td>The rate limit forgets the IP address within minutes. The hashes are deleted after midnight UTC of the same day. We keep only totals per platform, version and day, which are not personal data.</td>
       </tr>
       <tr>
+        <td>You turn on the daily ping in the app (Settings, or the question at first start)</td>
+        <td>App version and platform (macOS or Windows), and your IP address. The IP address is used for a rate limit and for a one-way hash of IP address, platform and date, to count each computer once a day.</td>
+        <td>To count active riders per platform and version. Your consent, Art. 6(1)(a) GDPR. Turn it off in Settings at any time.</td>
+        <td>The hashes are deleted after midnight UTC of the same day. We keep only totals per platform, version and day.</td>
+      </tr>
+      <tr>
         <td>You join a group ride</td>
         <td>The display name and colour you choose, a random rider id, your live distance, speed, cadence and power, and your IP address (needed for the connection)</td>
         <td>To show you and the other riders in the same room to each other. Performance of a contract, Art. 6(1)(b) GDPR.</td>
@@ -61,7 +68,7 @@
       </tr>
       <tr>
         <td>You buy a licence</td>
-        <td>Name, email, country, order and licence key, from our reseller Lemon Squeezy. When you activate or check the licence: the key and a random device id.</td>
+        <td>Name, email, country, order and licence key, from our reseller Lemon Squeezy. When you activate the licence (once, online) and when the app checks it (at most once a day, only when you are online): the key and a random device id, sent to Lemon Squeezy.</td>
         <td>To sell and deliver the licence and to check it. Performance of a contract and legal obligation (tax law), Art. 6(1)(b) and (c) GDPR.</td>
         <td>For the length of the licence, then as long as Italian tax law requires (up to 10 years).</td>
       </tr>
