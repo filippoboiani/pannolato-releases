@@ -1,4 +1,4 @@
-# Pannolato 0.1.0-alpha.6
+# Pannolato 0.1.0-alpha.7
 
 Pannolato is an indoor cycling app. It controls your smart trainer and shows a 3D ride.
 This is an early test build. Expect bugs.
@@ -6,8 +6,8 @@ This is an early test build. Expect bugs.
 ## Install
 
 1. Download the file for your system from the Releases page:
-   - macOS (Apple Silicon): `Pannolato-0.1.0-alpha.6-mac-arm64.dmg`
-   - Windows: `Pannolato-0.1.0-alpha.6-win-x64.exe`
+   - macOS (Apple Silicon): `Pannolato-0.1.0-alpha.7-mac-arm64.dmg`
+   - Windows: `Pannolato-0.1.0-alpha.7-win-x64.exe`
 2. The app is not signed yet. Your system shows a warning. This is normal.
    - macOS: open the dmg and drag Pannolato to Applications. Open the app once; macOS blocks it.
      Then open **System Settings > Privacy & Security**, scroll down and click **Open Anyway** next to Pannolato. Confirm. Do this once.
@@ -15,6 +15,7 @@ This is an early test build. Expect bugs.
    - Windows: run the installer. When SmartScreen shows a warning, click **More info**, then **Run anyway**.
 3. Allow Bluetooth when the system asks.
 4. Enter the access code you received from the owner (format XXXXX-XXXXX-XXXXX-XXXXX). The app asks once. Codes from alpha.5 and older do not work. After a few wrong codes the app makes you wait.
+5. The app asks once whether it may send an anonymous daily ping (app version and platform only), so we can count active riders. Change it any time in **Settings**.
 
 ## Devices
 
