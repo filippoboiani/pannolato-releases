@@ -1,4 +1,4 @@
-# Pannolato 0.1.0-alpha.1
+# Pannolato 0.1.0-alpha.2
 
 Pannolato is an indoor cycling app. It controls your smart trainer and shows a 3D ride.
 This is an early test build. Expect bugs.
@@ -6,18 +6,27 @@ This is an early test build. Expect bugs.
 ## Install
 
 1. Download the file for your system from the Releases page:
-   - macOS (Apple Silicon): `Pannolato-0.1.0-alpha.1-mac-arm64.dmg`
-   - Windows: `Pannolato-0.1.0-alpha.1-win-x64.exe`
+   - macOS (Apple Silicon): `Pannolato-0.1.0-alpha.2-mac-arm64.dmg`
+   - Windows: `Pannolato-0.1.0-alpha.2-win-x64.exe`
 2. The app is not signed yet. Your system shows a warning. This is normal.
    - macOS: open the dmg and drag Pannolato to Applications. Right-click the app, choose **Open**, then **Open** again. Do this once.
    - Windows: run the installer. When SmartScreen shows a warning, click **More info**, then **Run anyway**.
 3. Allow Bluetooth when the system asks.
+4. Enter the access code you received from the owner. The app asks once.
 
 ## Devices
 
 - Smart trainers with FTMS (Bluetooth).
 - Bluetooth heart-rate straps.
 - Turn on Bluetooth and wake the device (pedal or put on the strap) before you pair.
+
+## Group ride
+
+Ride together with up to 10 friends. Everyone needs a trainer and an internet connection.
+
+1. One rider opens **Group**, presses **New group** and shares the 6-letter code.
+2. The others open **Group** and enter the code and press **Join**.
+3. The host presses **Start in 10 s**. Keep-together holds the group on the road.
 
 ## Strava
 
