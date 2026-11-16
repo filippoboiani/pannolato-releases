@@ -1,0 +1,687 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Pannolato World Explained</title>
+<style>
+/* One column, 980px max. Text stays near 68ch. Charts and screenshots use the full width. */
+:root {
+  --bg: #eef2f1;
+  --panel: #ffffff;
+  --ink: #14202b;
+  --muted: #55646f;
+  --line: #d3dcdd;
+  --accent: #e0a100;   /* road-marking yellow: fills and marks only, never text */
+  --green: #2f6b4f;
+  --blue: #2c6e9b;
+  --red: #b5432f;
+  --track: #dde5e6;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1820;
+    --panel: #172330;
+    --ink: #e8eef2;
+    --muted: #9aa9b5;
+    --line: #2a3a48;
+    --accent: #f2b705;
+    --green: #6fbf93;
+    --blue: #7ab8e6;
+    --red: #e88b78;
+    --track: #223140;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1820;
+  --panel: #172330;
+  --ink: #e8eef2;
+  --muted: #9aa9b5;
+  --line: #2a3a48;
+  --accent: #f2b705;
+  --green: #6fbf93;
+  --blue: #7ab8e6;
+  --red: #e88b78;
+  --track: #223140;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 48px;
+  overflow-x: hidden;
+}
+h1, h2, h3 { font-family: "Space Grotesk", Inter, system-ui, sans-serif; line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 6vw, 3.4rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.4rem, 3.5vw, 1.9rem); letter-spacing: -0.01em; }
+h3 { font-size: 1.12rem; margin-top: 28px; }
+p { margin: 0 0 1em; max-width: 68ch; }
+code { font: 0.88em ui-monospace, Menlo, monospace; background: var(--panel); padding: 0.1em 0.35em; border-radius: 4px; border: 1px solid var(--line); }
+a { color: var(--blue); }
+
+.wrap { max-width: 980px; margin: 0 auto; min-width: 0; }
+header.hero { padding: 56px 0 28px; border-bottom: 4px solid var(--accent); }
+.kicker { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.lede { font-size: 1.15rem; color: var(--muted); margin-top: 16px; }
+.toc { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 20px; font-size: 0.9rem; }
+.toc a { color: var(--muted); text-decoration: none; border-bottom: 1px dotted var(--line); }
+
+section { padding-top: 48px; min-width: 0; }
+.label { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 24px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+.tile b { display: block; font: 700 1.6rem/1.1 "Space Grotesk", Inter, sans-serif; font-variant-numeric: tabular-nums; }
+.tile span { font-size: 0.85rem; color: var(--muted); }
+
+figure { margin: 24px 0; min-width: 0; }
+figure img { display: block; width: 100%; height: auto; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); }
+figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 8px; max-width: 70ch; }
+.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 24px 0; }
+.shots figure { margin: 0; }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 20px; margin: 20px 0; min-width: 0; }
+.card svg { display: block; width: 100%; height: auto; max-width: 100%; }
+.card h4 { margin: 0 0 4px; font: 600 1rem "Space Grotesk", Inter, sans-serif; }
+.cap { font-size: 0.88rem; color: var(--muted); margin: 10px 0 0; max-width: 72ch; }
+
+/* Flow of boxes */
+.flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin: 20px 0; }
+.flow .step { flex: 1 1 130px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; font-size: 0.9rem; min-width: 0; }
+.flow .step b { display: block; font-family: "Space Grotesk", Inter, sans-serif; }
+.flow .step.hot { border-color: var(--accent); border-width: 2px; }
+.flow .arrow { align-self: center; color: var(--muted); font-size: 1.2rem; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--line); border-radius: 8px; max-width: 100%; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; background: var(--panel); }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.76rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+td.n, td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.num { text-align: right; }
+tr:last-child td { border-bottom: 0; }
+
+/* Bar charts, to scale, in HTML */
+.bars { margin: 16px 0; }
+.bar-row { display: grid; grid-template-columns: minmax(96px, 170px) minmax(0, 1fr) auto; gap: 10px; align-items: center; margin: 7px 0; font-size: 0.92rem; }
+.bar-row > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.bar-track { position: relative; height: 20px; background: var(--track); border-radius: 4px; min-width: 0; }
+.bar-fill { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 4px; background: var(--blue); }
+.bar-fill.g { background: var(--green); }
+.bar-fill.a { background: var(--accent); }
+.bar-fill.r { background: var(--red); }
+.bar-val { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; text-align: right; }
+.marker { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 2px dashed var(--ink); }
+.marker span { position: absolute; top: -18px; left: 4px; font-size: 0.74rem; color: var(--muted); white-space: nowrap; }
+.axis { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin: 4px 0 0 0; font-variant-numeric: tabular-nums; }
+.stack { display: flex; height: 40px; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); margin: 14px 0 8px; }
+.stack > div { min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.85rem; color: var(--muted); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+@media (max-width: 560px) {
+  .bar-row { grid-template-columns: 1fr; gap: 4px; }
+  .bar-row > .bar-val { text-align: left; }
+}
+
+ul.clean { padding-left: 1.1em; margin: 0 0 1em; }
+ul.clean li { margin: 0.35em 0; max-width: 68ch; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.chip { font-size: 0.85rem; border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 4px 12px; }
+
+.note { font-size: 0.9rem; color: var(--muted); border-left: 3px solid var(--accent); padding-left: 12px; margin: 16px 0; max-width: 70ch; }
+.warn { font-size: 0.9rem; border-left: 3px solid var(--red); padding-left: 12px; margin: 16px 0; max-width: 70ch; }
+footer { margin-top: 56px; font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+
+/* SVG text */
+.card svg text, figure svg text { font-family: Inter, system-ui, sans-serif; font-size: 13px; fill: var(--ink); }
+.card svg .m { fill: var(--muted); font-size: 12px; }
+.card svg .lane { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 6 6; }
+.card svg .grid { stroke: var(--line); stroke-width: 1; }
+.card svg .axisline { stroke: var(--muted); stroke-width: 1; }
+.card svg .on-fill { fill: #ffffff; }
+.card svg .on-accent { fill: #111111; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .bar-fill { transition: width 0.6s ease; }
+}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Pannolato · Indoor Trainer · how the 3D world works</div>
+  <h1>Pannolato World Explained</h1>
+  <p class="lede">A road-cycling world that runs in the browser beside a smart trainer. The road is a graph built offline from a hand-made source. Scenery is generated per chunk from a seed. Big trees switch to cheaper models and then to impostors. Other riders and events run in one simulation.</p>
+  <nav class="toc" aria-label="Sections">
+    <a href="#numbers">Numbers</a><a href="#view">The view</a><a href="#frame">Frame</a><a href="#systems">Systems</a><a href="#map">Map</a><a href="#terrain">Terrain</a><a href="#lod">Level of detail</a><a href="#budget">Budget</a><a href="#assets">Assets</a><a href="#agents">Agents</a><a href="#events">Events</a><a href="#gaps">Doc gaps</a>
+  </nav>
+</header>
+
+<section id="numbers">
+  <div class="label">At a glance</div>
+  <h2>The numbers behind the design</h2>
+  <p>Road figures come from <code>routes/map.json</code>, read directly. Limits come from the code. Triangle and frame figures come from the project docs.</p>
+  <div class="tiles">
+    <div class="tile"><b>36</b><span>nodes in the road graph</span></div>
+    <div class="tile"><b>52</b><span>road edges</span></div>
+    <div class="tile"><b>11</b><span>sectors</span></div>
+    <div class="tile"><b>167.8 km</b><span>total road length, all edges</span></div>
+    <div class="tile"><b>28.8 km</b><span>default loop (8 edges)</span></div>
+    <div class="tile"><b>200 m</b><span>scenery chunk</span></div>
+    <div class="tile"><b>1 800</b><span>props drawn per refill, max</span></div>
+    <div class="tile"><b>14</b><span>other riders at most</span></div>
+    <div class="tile"><b>16</b><span>event kinds</span></div>
+    <div class="tile"><b>15 s</b><span>event slot</span></div>
+    <div class="tile"><b>3.7 M</b><span>pixels per frame, budget</span></div>
+    <div class="tile"><b>250 k</b><span>triangles per frame, target (docs)</span></div>
+  </div>
+</section>
+
+<section id="view">
+  <div class="label">The view</div>
+  <h2>What the rider sees</h2>
+  <p>The chase camera sits behind the rider. Trees, houses and fields are placed by the world from a seed, not stored in a file. The blue ring marks the rider's place on the road.</p>
+  <figure>
+    <img src="media/w-sanluca.jpg" alt="Rider on a country road with pine trees and fences" loading="lazy">
+    <figcaption>Chase view on the San Luca stretch. Pines are instanced props. The far ones are impostors.</figcaption>
+  </figure>
+  <div class="shots">
+    <figure><img src="media/w-city.jpg" alt="City street in Bologna" loading="lazy"><figcaption>Bologna: the city set piece, with its own buildings and tram.</figcaption></figure>
+    <figure><img src="media/w-woods.jpg" alt="Deep forest stretch" loading="lazy"><figcaption>Deep forest: the densest stretch, close to the triangle budget.</figcaption></figure>
+    <figure><img src="media/w-apennines.jpg" alt="Apennine hills" loading="lazy"><figcaption>The Apennines: hills and the far terrain ring.</figcaption></figure>
+    <figure><img src="media/w-plain.jpg" alt="Flat farmland" loading="lazy"><figcaption>The plain: fields, farmhouses and low ground cover.</figcaption></figure>
+    <figure><img src="media/w-fans.jpg" alt="Fans on the road" loading="lazy"><figcaption>An event: fans at the climb, run by the agent simulation.</figcaption></figure>
+  </div>
+</section>
+
+<section id="frame">
+  <div class="label">Architecture</div>
+  <h2>How a frame is built</h2>
+  <p>The world builds one frame object and runs a fixed list of systems in order. Each system writes only its own objects. The order below is the order in the code (<code>world/index.ts</code>).</p>
+  <div class="flow" aria-label="Frame pipeline">
+    <div class="step"><b>1 sim</b>agents step, lanes</div><div class="arrow">→</div>
+    <div class="step"><b>2 player</b>rider pose</div><div class="arrow">→</div>
+    <div class="step"><b>3 chase</b>camera pose</div><div class="arrow">→</div>
+    <div class="step"><b>4 atmosphere</b>sun, fog, colours</div><div class="arrow">→</div>
+    <div class="step hot"><b>5 systems</b>13 in one fixed list</div><div class="arrow">→</div>
+    <div class="step"><b>6 render</b>post-processing</div>
+  </div>
+
+  <div class="card">
+    <h4>Stages in run order</h4>
+    <svg viewBox="0 0 760 210" role="img" aria-label="Frame stages as blocks in run order; the systems stage is largest">
+      <g class="m"><text x="0" y="14">run order, widths schematic (no timings measured)</text></g>
+      <rect x="0" y="30" width="60" height="44" rx="4" style="fill:var(--blue)"/><text x="30" y="57" text-anchor="middle" class="on-fill">1 sim</text>
+      <rect x="64" y="30" width="50" height="44" rx="4" style="fill:var(--blue);opacity:0.8"/><text x="89" y="57" text-anchor="middle" class="on-fill">2 pl</text>
+      <rect x="118" y="30" width="50" height="44" rx="4" style="fill:var(--blue);opacity:0.8"/><text x="143" y="57" text-anchor="middle" class="on-fill">3 cam</text>
+      <rect x="172" y="30" width="60" height="44" rx="4" style="fill:var(--blue);opacity:0.8"/><text x="202" y="57" text-anchor="middle" class="on-fill">4 atmo</text>
+      <rect x="236" y="30" width="400" height="44" rx="4" style="fill:var(--accent)"/><text x="436" y="57" text-anchor="middle" class="on-accent">5 systems (13): chunkView, props, terrain, traffic, city ...</text>
+      <rect x="640" y="30" width="120" height="44" rx="4" style="fill:var(--green)"/><text x="700" y="57" text-anchor="middle" class="on-fill">6 render</text>
+      <text x="0" y="104" class="m">Step 5 runs the systems list. The chunk and prop systems refill only when the rider moves, or when a chunk changes.</text>
+      <g class="axisline"><line x1="0" y1="120" x2="760" y2="120"/></g>
+      <text x="0" y="146">Timings are not on this page. Measure them with world.html?hitchlog=1 (per-stage ms) or ?hud=1.</text>
+    </svg>
+    <p class="cap">Schematic. Widths are not to scale.</p>
+  </div>
+</section>
+
+<section id="systems">
+  <div class="label">Systems</div>
+  <h2>The list of systems</h2>
+  <p>Steps 1 to 4 run one by one. Step 5 runs the <code>systems</code> array in order. Step 6 draws the frame. <code>stop()</code> disposes the systems in reverse order.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>System</th><th>File</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td class="n">1</td><td>sim</td><td><code>agents/agents.ts</code></td><td>Steps the agent simulation: player lane, riders, cars, tram, running event.</td></tr>
+        <tr><td class="n">2</td><td>player</td><td><code>view/player3d.ts</code></td><td>Places and animates the rider and the ghost.</td></tr>
+        <tr><td class="n">3</td><td>chase</td><td><code>view/chase.ts</code></td><td>Moves the chase and top-view cameras.</td></tr>
+        <tr><td class="n">4</td><td>atmosphere</td><td><code>terrain/atmosphere.ts</code></td><td>Lights, fog, region colours, mist, sun direction.</td></tr>
+        <tr><td class="n">5a</td><td>chunkView</td><td><code>scenery/chunkView.ts</code></td><td>Streams the 200 m chunks around the rider. Sets <code>chunksChanged</code>.</td></tr>
+        <tr><td class="n">5b</td><td>traffic</td><td><code>view/traffic3d.ts</code></td><td>Draws the other riders and their crowd poses.</td></tr>
+        <tr><td class="n">5c</td><td>city</td><td><code>view/city3d.ts</code></td><td>Draws city cars and pedestrians.</td></tr>
+        <tr><td class="n">5d</td><td>cityMass</td><td><code>scenery/cityMassView.ts</code></td><td>Draws the Bologna building masses.</td></tr>
+        <tr><td class="n">5e</td><td>porto</td><td><code>scenery/portoView.ts</code></td><td>Draws the Porto set piece.</td></tr>
+        <tr><td class="n">5f</td><td>tram</td><td><code>view/tram3d.ts</code></td><td>Draws the Bologna tram.</td></tr>
+        <tr><td class="n">5g</td><td>townSigns</td><td><code>scenery/townSign.ts</code></td><td>Draws the town name signs.</td></tr>
+        <tr><td class="n">5h</td><td>gates</td><td><code>view/gates.ts</code></td><td>Draws gates and finish arches on the route.</td></tr>
+        <tr><td class="n">5i</td><td>terrain</td><td><code>terrain/terrain.ts</code></td><td>Draws the near and far ground meshes.</td></tr>
+        <tr><td class="n">5j</td><td>props</td><td><code>scenery/props.ts</code></td><td>Builds instanced prop batches, LOD, impostors and blob shadows.</td></tr>
+        <tr><td class="n">5k</td><td>groundCover</td><td><code>scenery/groundCover.ts</code></td><td>Draws grass tufts and ground cover.</td></tr>
+        <tr><td class="n">5l</td><td>sky</td><td><code>terrain/sky.ts</code></td><td>Sky, clouds, birds, sun.</td></tr>
+        <tr><td class="n">5m</td><td>sand</td><td><code>terrain/sand.ts</code></td><td>Sand and dune ground in the desert biome.</td></tr>
+        <tr><td class="n">6</td><td>render</td><td><code>renderer.ts</code></td><td>Renders the scene through the post-processing chain.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="warn">Known issue: <code>SYSTEM_NAMES</code> in <code>index.ts</code> has no entry for <code>townSigns</code>. From that point the timing labels shift by one, and <code>sand</code> shows as <code>12</code>. Add <code>"townSigns"</code> at index 6 to fix it.</p>
+</section>
+
+<section id="map">
+  <div class="label">The map</div>
+  <h2>A road graph, built offline</h2>
+  <p>The app never builds the road at run time. A hand-made source holds nodes and edges. A build step writes a fixed file, and the app reads it.</p>
+  <svg viewBox="0 0 920 150" role="img" aria-label="Pipeline: map.source.json, build-map.sh and mapGen.ts, map.json, then roadGraph.ts at run time" style="display:block;width:100%;height:auto;max-width:100%">
+    <rect x="10" y="40" width="160" height="70" rx="8" style="fill:var(--panel);stroke:var(--line)"/>
+    <text x="90" y="70" text-anchor="middle">map.source.json</text>
+    <text x="90" y="90" class="m" text-anchor="middle">hand-edited nodes, edges</text>
+    <line x1="170" y1="75" x2="215" y2="75" style="stroke:var(--muted);stroke-width:2"/>
+    <polygon points="215,70 225,75 215,80" style="fill:var(--muted)"/>
+    <rect x="225" y="40" width="170" height="70" rx="8" style="fill:var(--panel);stroke:var(--line)"/>
+    <text x="310" y="70" text-anchor="middle">build-map.sh</text>
+    <text x="310" y="90" class="m" text-anchor="middle">runs mapGen.ts offline</text>
+    <line x1="395" y1="75" x2="440" y2="75" style="stroke:var(--muted);stroke-width:2"/>
+    <polygon points="440,70 450,75 440,80" style="fill:var(--muted)"/>
+    <rect x="450" y="40" width="160" height="70" rx="8" style="fill:var(--panel);stroke:var(--accent);stroke-width:2"/>
+    <text x="530" y="70" text-anchor="middle">map.json</text>
+    <text x="530" y="90" class="m" text-anchor="middle">committed, 2 m samples</text>
+    <line x1="610" y1="75" x2="655" y2="75" style="stroke:var(--muted);stroke-width:2"/>
+    <polygon points="655,70 665,75 655,80" style="fill:var(--muted)"/>
+    <rect x="665" y="40" width="245" height="70" rx="8" style="fill:var(--panel);stroke:var(--line)"/>
+    <text x="787" y="70" text-anchor="middle">roadGraph.ts at run time</text>
+    <text x="787" y="90" class="m" text-anchor="middle">forks, heading, grade</text>
+  </svg>
+
+  <figure>
+    <img src="media/map-emilia.png" alt="Draft map of the road network across Emilia-Romagna" loading="lazy">
+    <figcaption>Draft of the road network over Emilia-Romagna. The labels are Modena, Bologna, Imola, Ferrara, Cesenatico and Rimini.</figcaption>
+  </figure>
+
+  <h3>Road length by biome</h3>
+  <p>All 52 edges, grouped by their biome tag. Lengths are summed from the 2 m samples in <code>map.json</code>.</p>
+  <div class="bars" role="img" aria-label="Road length by biome in km: mountains 43.5, farmland 36.7, vineyard 35.8, village 20.1, forest 11.8, delta 11.1, coast 5.2, hills 3.5">
+    <div class="bar-row"><span>mountains (8 edges)</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">43.5 km</span></div>
+    <div class="bar-row"><span>farmland (9)</span><div class="bar-track"><div class="bar-fill" style="width:84.3%"></div></div><span class="bar-val">36.7 km</span></div>
+    <div class="bar-row"><span>vineyard (10)</span><div class="bar-track"><div class="bar-fill" style="width:82.2%"></div></div><span class="bar-val">35.8 km</span></div>
+    <div class="bar-row"><span>village (10)</span><div class="bar-track"><div class="bar-fill" style="width:46.3%"></div></div><span class="bar-val">20.1 km</span></div>
+    <div class="bar-row"><span>forest (8)</span><div class="bar-track"><div class="bar-fill g" style="width:27.2%"></div></div><span class="bar-val">11.8 km</span></div>
+    <div class="bar-row"><span>delta (3)</span><div class="bar-track"><div class="bar-fill" style="width:25.6%"></div></div><span class="bar-val">11.1 km</span></div>
+    <div class="bar-row"><span>coast (2)</span><div class="bar-track"><div class="bar-fill" style="width:12.0%"></div></div><span class="bar-val">5.2 km</span></div>
+    <div class="bar-row"><span>hills (2)</span><div class="bar-track"><div class="bar-fill" style="width:8.1%"></div></div><span class="bar-val">3.5 km</span></div>
+  </div>
+
+  <h3>The default loop, edge by edge</h3>
+  <p>The rider starts on Via Indipendenza in Bologna and follows 8 edges back to the start. Each block is one edge, sized by its length. Total: 28.8 km.</p>
+  <div class="stack" role="img" aria-label="Default loop split by edge length">
+    <div style="flex:2.29;background:var(--blue)" title="bologna 2.3 km"></div>
+    <div style="flex:2.77;background:var(--blue);opacity:0.8" title="viali 2.8 km"></div>
+    <div style="flex:1.92;background:var(--green)" title="san-luca 1.9 km"></div>
+    <div style="flex:1.92;background:var(--accent)" title="san-luca-sasso 1.9 km"></div>
+    <div style="flex:6.65;background:var(--red)" title="sasso-futa 6.6 km"></div>
+    <div style="flex:0.13;background:var(--red);opacity:0.6" title="futa-link 0.1 km"></div>
+    <div style="flex:9.44;background:var(--red);opacity:0.8" title="futa-imola 9.4 km"></div>
+    <div style="flex:3.67;background:var(--muted)" title="imola-bologna 3.7 km"></div>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--blue)"></i>farmland: bologna 2.3, viali 2.8</span>
+    <span><i style="background:var(--green)"></i>hills: san-luca 1.9</span>
+    <span><i style="background:var(--accent)"></i>vineyard: san-luca-sasso 1.9</span>
+    <span><i style="background:var(--red)"></i>mountains: sasso-futa 6.6, futa-link 0.1, futa-imola 9.4</span>
+    <span><i style="background:var(--muted)"></i>village: imola-bologna 3.7</span>
+  </div>
+
+  <h3>How steep the road is</h3>
+  <p>Each edge's steepest 2 m step, in percent. The build caps the grade at 8 %. The highest edge is 7.8 %. Most edges are flat.</p>
+  <div class="card">
+    <svg viewBox="0 0 640 260" role="img" aria-label="Histogram of edges by steepest grade: 29 edges at 0 to 1 percent, 2 at 1 to 2, 3 at 2 to 3, none at 3 to 4, 2 at 4 to 5, 4 at 5 to 6, 5 at 6 to 7, 7 at 7 to 8">
+      <line class="axisline" x1="50" y1="200" x2="620" y2="200"/>
+      <line class="grid" x1="50" y1="60" x2="620" y2="60"/>
+      <line class="grid" x1="50" y1="130" x2="620" y2="130"/>
+      <text class="m" x="42" y="204" text-anchor="end">0</text>
+      <text class="m" x="42" y="134" text-anchor="end">15</text>
+      <text class="m" x="42" y="64" text-anchor="end">30</text>
+      <!-- bar height = count * 4.6 (30 edges = 138 px) -->
+      <rect x="62" y="66" width="48" height="134" rx="3" style="fill:var(--blue)"/><text x="86" y="60" text-anchor="middle">29</text>
+      <rect x="128" y="190.8" width="48" height="9.2" rx="3" style="fill:var(--blue)"/><text x="152" y="184" text-anchor="middle">2</text>
+      <rect x="194" y="186" width="48" height="14" rx="3" style="fill:var(--blue)"/><text x="218" y="180" text-anchor="middle">3</text>
+      <rect x="260" y="200" width="48" height="0" rx="3" style="fill:var(--blue)"/><text x="284" y="196" text-anchor="middle" class="m">0</text>
+      <rect x="326" y="190.8" width="48" height="9.2" rx="3" style="fill:var(--accent)"/><text x="350" y="184" text-anchor="middle">2</text>
+      <rect x="392" y="181.6" width="48" height="18.4" rx="3" style="fill:var(--accent)"/><text x="416" y="176" text-anchor="middle">4</text>
+      <rect x="458" y="177" width="48" height="23" rx="3" style="fill:var(--accent)"/><text x="482" y="171" text-anchor="middle">5</text>
+      <rect x="524" y="168" width="48" height="32" rx="3" style="fill:var(--red)"/><text x="548" y="162" text-anchor="middle">7</text>
+      <g class="m" text-anchor="middle">
+        <text x="86" y="222">0–1 %</text><text x="152" y="222">1–2</text><text x="218" y="222">2–3</text><text x="284" y="222">3–4</text>
+        <text x="350" y="222">4–5</text><text x="416" y="222">5–6</text><text x="482" y="222">6–7</text><text x="548" y="222">7–8</text>
+      </g>
+      <text class="m" x="335" y="248" text-anchor="middle">steepest grade on the edge (%). Cap: 8 %</text>
+    </svg>
+    <p class="cap">52 edges. Most of them are flat (0 to 1 %). Seven reach 7 to 8 %, the build cap.</p>
+  </div>
+
+  <h3>Eleven sectors</h3>
+  <p>Each sector has a scenery template. Templates decide the prop mix, the ground and the buildings. The bar shows how many edges each sector holds.</p>
+  <div class="bars" role="img" aria-label="Edges per sector, 11 sectors, total 52">
+    <div class="bar-row"><span>village (borghi)</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">9</span></div>
+    <div class="bar-row"><span>vineyard (colli)</span><div class="bar-track"><div class="bar-fill" style="width:88.9%"></div></div><span class="bar-val">8</span></div>
+    <div class="bar-row"><span>alpine (appennino)</span><div class="bar-track"><div class="bar-fill" style="width:88.9%"></div></div><span class="bar-val">8</span></div>
+    <div class="bar-row"><span>deep-wood (boschi)</span><div class="bar-track"><div class="bar-fill g" style="width:88.9%"></div></div><span class="bar-val">8</span></div>
+    <div class="bar-row"><span>river-plain (reno)</span><div class="bar-track"><div class="bar-fill" style="width:77.8%"></div></div><span class="bar-val">7</span></div>
+    <div class="bar-row"><span>delta (delta)</span><div class="bar-track"><div class="bar-fill" style="width:33.3%"></div></div><span class="bar-val">3</span></div>
+    <div class="bar-row"><span>city (centro)</span><div class="bar-track"><div class="bar-fill" style="width:22.2%"></div></div><span class="bar-val">2</span></div>
+    <div class="bar-row"><span>brick-hills (san-luca)</span><div class="bar-track"><div class="bar-fill" style="width:22.2%"></div></div><span class="bar-val">2</span></div>
+    <div class="bar-row"><span>coast (costa)</span><div class="bar-track"><div class="bar-fill" style="width:22.2%"></div></div><span class="bar-val">2</span></div>
+    <div class="bar-row"><span>vineyard (pedecolle)</span><div class="bar-track"><div class="bar-fill" style="width:22.2%"></div></div><span class="bar-val">2</span></div>
+    <div class="bar-row"><span>porto (porto)</span><div class="bar-track"><div class="bar-fill" style="width:11.1%"></div></div><span class="bar-val">1</span></div>
+  </div>
+  <p class="note">The sector names in brackets are the sector ids in <code>map.json</code>. The city, Porto, and San Luca sectors have their own scenery set pieces.</p>
+</section>
+
+<section id="terrain">
+  <div class="label">Terrain and scenery</div>
+  <h2>Ground and scenery, chunk by chunk</h2>
+  <p>Ground height depends only on position. Scenery is made per 200 m chunk from a fixed seed. The same chunk gives the same trees and houses on any route.</p>
+
+  <div class="card">
+    <svg viewBox="0 0 520 380" role="img" aria-label="Rings of chunk levels around the rider: near 350 m, mid 750 m, drop 900 m">
+      <circle cx="260" cy="190" r="180" style="fill:none;stroke:var(--line);stroke-dasharray:5 5"/>
+      <circle cx="260" cy="190" r="150" style="fill:none;stroke:var(--blue);stroke-width:2"/>
+      <circle cx="260" cy="190" r="70" style="fill:var(--blue);fill-opacity:0.18;stroke:var(--blue);stroke-width:2"/>
+      <circle cx="260" cy="190" r="6" style="fill:var(--accent)"/>
+      <text x="260" y="122" text-anchor="middle">near · 350 m</text>
+      <text x="260" y="58" text-anchor="middle" class="m">mid · 750 m</text>
+      <text x="260" y="22" text-anchor="middle" class="m">dropped beyond 900 m</text>
+      <text x="260" y="222" text-anchor="middle" class="m">rider</text>
+      <text x="440" y="356" class="m" text-anchor="middle">1 m = 0.2 px in this drawing</text>
+    </svg>
+    <p class="cap">Chunk levels around the camera focus. A chunk leaves a level 8 % past its entry distance, so it does not flicker at the edge.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Setting</th><th>Value</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>NEAR</td><td class="num">350 m</td><td>Ground meshes and all props.</td></tr>
+        <tr><td>MID</td><td class="num">750 m</td><td>Far-reach trees and set pieces only.</td></tr>
+        <tr><td>DROP</td><td class="num">900 m</td><td>Chunks beyond this are dropped from the scene.</td></tr>
+        <tr><td>Hysteresis</td><td class="num">× 1.08</td><td>A chunk leaves a level 8 % past its entry point.</td></tr>
+        <tr><td>First frame</td><td class="num">260 m</td><td>Every chunk this close is built at once. Then one per frame.</td></tr>
+        <tr><td>Cache</td><td class="num">64 chunks</td><td>Built chunk data kept for reuse.</td></tr>
+        <tr><td>Geometry pool</td><td class="num">cap 6</td><td>Uploaded buffers are reused when a new chunk fits.</td></tr>
+        <tr><td>Far terrain ring</td><td class="num">30 m step, 720 m half-size</td><td>A 60 m hole is left for the near ground.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Blob shadows and prop budget</h3>
+  <p>The shadow pass draws only near casters. Small props such as rocks, bushes and fences cast no shadow. Blob shadows are a soft dark patch under nearby props, a cheap stand-in for a real shadow.</p>
+  <div class="bars" role="img" aria-label="Caps: 1800 props per refill, 600 blob shadows, 14 other riders, 256 impostor quads">
+    <div class="bar-row"><span>props per refill</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">1 800 (max)</span></div>
+    <div class="bar-row"><span>blob shadows</span><div class="bar-track"><div class="bar-fill g" style="width:33.3%"></div></div><span class="bar-val">600 (max)</span></div>
+    <div class="bar-row"><span>impostor quads</span><div class="bar-track"><div class="bar-fill a" style="width:14.2%"></div></div><span class="bar-val">256 per mesh</span></div>
+    <div class="bar-row"><span>other riders</span><div class="bar-track"><div class="bar-fill r" style="width:0.8%"></div></div><span class="bar-val">14 (max)</span></div>
+    <div class="axis"><span>bar length is the cap, scaled to 1 800</span><span></span></div>
+  </div>
+</section>
+
+<section id="lod">
+  <div class="label">Performance</div>
+  <h2>Level of detail, dissolves and impostors</h2>
+  <p>Big trees switch to cheaper models with distance. The switch dissolves, so no tree changes shape in one frame. Far trees become camera-facing quads.</p>
+
+  <div class="card">
+    <svg viewBox="0 0 760 230" role="img" aria-label="Distance bands for autumn trees and giant firs in chase view">
+      <text x="60" y="14" class="m">0 m</text><text x="420" y="14" class="m">90 m</text><text x="700" y="14" class="m">160 m</text>
+      <text x="0" y="48">Autumn</text>
+      <rect x="60" y="30" width="132" height="24" rx="4" style="fill:var(--blue)"/><text x="126" y="47" text-anchor="middle" class="on-fill">full</text>
+      <rect x="192" y="30" width="56" height="24" style="fill:var(--accent)"/>
+      <rect x="248" y="30" width="172" height="24" style="fill:var(--green);opacity:0.75"/><text x="334" y="47" text-anchor="middle" class="on-fill">far model</text>
+      <rect x="420" y="30" width="80" height="24" style="fill:var(--accent)"/>
+      <rect x="500" y="30" width="240" height="24" rx="4" style="fill:var(--red);opacity:0.85"/><text x="620" y="47" text-anchor="middle" class="on-fill">impostor</text>
+      <text x="0" y="110">Giant fir</text>
+      <rect x="60" y="92" width="132" height="24" rx="4" style="fill:var(--blue)"/><text x="126" y="109" text-anchor="middle" class="on-fill">full</text>
+      <rect x="192" y="92" width="56" height="24" style="fill:var(--accent)"/>
+      <rect x="248" y="92" width="372" height="24" style="fill:var(--green);opacity:0.75"/><text x="434" y="109" text-anchor="middle" class="on-fill">far model</text>
+      <rect x="620" y="92" width="80" height="24" style="fill:var(--accent)"/>
+      <rect x="700" y="92" width="40" height="24" rx="4" style="fill:var(--red);opacity:0.85"/>
+      <line class="axisline" x1="60" y1="150" x2="740" y2="150"/>
+      <g class="m">
+        <line class="axisline" x1="60" y1="146" x2="60" y2="154"/><text x="60" y="170" text-anchor="middle">0</text>
+        <line class="axisline" x1="192" y1="146" x2="192" y2="154"/><text x="192" y="170" text-anchor="middle">33</text>
+        <line class="axisline" x1="248" y1="146" x2="248" y2="154"/><text x="248" y="170" text-anchor="middle">47</text>
+        <line class="axisline" x1="420" y1="146" x2="420" y2="154"/><text x="420" y="170" text-anchor="middle">90</text>
+        <line class="axisline" x1="500" y1="146" x2="500" y2="154"/><text x="500" y="170" text-anchor="middle">110</text>
+        <line class="axisline" x1="620" y1="146" x2="620" y2="154"/><text x="620" y="170" text-anchor="middle">140</text>
+        <line class="axisline" x1="700" y1="146" x2="700" y2="154"/><text x="700" y="170" text-anchor="middle">160</text>
+      </g>
+      <text x="400" y="200" text-anchor="middle" class="m">metres from the camera focus, linear scale, 0 to 170 m</text>
+    </svg>
+    <p class="cap">Chase view. Yellow marks the dissolve bands. Autumn trees: far model from 40 m (band 33 to 47 m), impostor from 100 m (band 90 to 110 m). Giant firs: far model from 40 m, impostor from 150 m (band 140 to 160 m). All distances are from the camera focus.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Object</th><th>Switch</th><th>Band</th><th>Measured from</th><th>View</th></tr></thead>
+      <tbody>
+        <tr><td>Giant fir (chase)</td><td class="num">40 m</td><td class="num">±7 m</td><td>camera focus</td><td>chase</td></tr>
+        <tr><td>Giant fir (iso)</td><td class="num">95 m</td><td class="num">±7 m</td><td>camera focus</td><td>iso</td></tr>
+        <tr><td>Giant fir impostor</td><td class="num">150 m</td><td class="num">±10 m</td><td>camera focus</td><td>chase only</td></tr>
+        <tr><td>Autumn tree (far)</td><td class="num">40 m</td><td class="num">±7 m</td><td>camera focus</td><td>chase</td></tr>
+        <tr><td>Autumn tree impostor</td><td class="num">100 m</td><td class="num">±10 m</td><td>camera focus</td><td>chase only</td></tr>
+        <tr><td>Autumn tree <code>_dist</code> model</td><td class="num">100 m</td><td>not checked</td><td>camera focus</td><td>not checked</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Three techniques</h3>
+  <ul class="clean">
+    <li><b>Level of detail.</b> Each big tree has a cheaper model. Autumn trees and firs switch at fixed distances.</li>
+    <li><b>Dissolve, not pop.</b> A shader discards pixels in a fixed screen pattern across a 7 m band. Two levels fill each other's holes. Nothing moves or changes size.</li>
+    <li><b>Impostors.</b> Far trees become camera-facing quads. The atlas is baked at run time from the far models: 1024 px, eight kinds, one material, one instanced mesh of up to 256 quads.</li>
+  </ul>
+
+  <div class="card">
+    <h4>Atlas layout</h4>
+    <svg viewBox="0 0 520 300" role="img" aria-label="Impostor atlas: a 1024 by 1024 texture divided into a 3 by 3 grid of cells, eight used">
+      <rect x="20" y="20" width="300" height="300" style="fill:var(--panel);stroke:var(--ink)"/>
+      <g class="grid">
+        <line x1="120" y1="20" x2="120" y2="320"/><line x1="220" y1="20" x2="220" y2="320"/>
+        <line x1="20" y1="120" x2="320" y2="120"/><line x1="20" y1="220" x2="320" y2="220"/>
+      </g>
+      <rect x="22" y="22" width="97" height="97" style="fill:var(--red);opacity:0.5"/><text x="70" y="72" text-anchor="middle">fir giant</text>
+      <rect x="122" y="22" width="97" height="97" style="fill:var(--green);opacity:0.45"/><text x="170" y="72" text-anchor="middle">fir canopy</text>
+      <rect x="222" y="22" width="97" height="97" style="fill:var(--red);opacity:0.5"/><text x="270" y="72" text-anchor="middle">arch red</text>
+      <rect x="22" y="122" width="97" height="97" style="fill:var(--accent);opacity:0.6"/><text x="70" y="172" text-anchor="middle">arch orange</text>
+      <rect x="122" y="122" width="97" height="97" style="fill:var(--accent);opacity:0.9"/><text x="170" y="172" text-anchor="middle">arch gold</text>
+      <rect x="222" y="122" width="97" height="97" style="fill:var(--red);opacity:0.35"/><text x="270" y="172" text-anchor="middle">maple red</text>
+      <rect x="22" y="222" width="97" height="97" style="fill:var(--accent);opacity:0.45"/><text x="70" y="272" text-anchor="middle">maple orange</text>
+      <rect x="122" y="222" width="97" height="97" style="fill:var(--accent);opacity:0.7"/><text x="170" y="272" text-anchor="middle">maple gold</text>
+      <rect x="222" y="222" width="97" height="97" style="fill:var(--line);opacity:0.6"/><text x="270" y="272" text-anchor="middle" class="m">empty</text>
+      <text x="340" y="60">1024 × 1024 px</text>
+      <text x="340" y="80" class="m">3 × 3 grid, cell 341 px</text>
+      <text x="340" y="112" class="m">eight kinds; the ninth cell is</text>
+      <text x="340" y="130" class="m">unused</text>
+      <text x="340" y="162" class="m">each cell is one side view,</text>
+      <text x="340" y="180" class="m">lit by a fixed soft light</text>
+    </svg>
+    <p class="cap">Cell layout from the code (<code>impostor.ts</code>). Colours are only for this drawing.</p>
+  </div>
+</section>
+
+<section id="budget">
+  <div class="label">Budget</div>
+  <h2>Pixels, triangles and render scale</h2>
+
+  <h3>Pixels per frame</h3>
+  <p>The renderer caps the pixels it draws at 3.7 M. A 4K screen has 8.3 M pixels, so it draws at about 0.67 of its pixel ratio along each side. The 2.5 M line switches multisampling from 4× to 2×.</p>
+  <div class="bars" role="img" aria-label="Pixel counts per screen size against the 3.7 million pixel budget">
+    <div class="bar-row"><span>1280 × 720</span><div class="bar-track"><div class="bar-fill g" style="width:11.1%"></div></div><span class="bar-val">0.92 M</span></div>
+    <div class="bar-row"><span>1920 × 1080</span><div class="bar-track"><div class="bar-fill g" style="width:25.0%"></div></div><span class="bar-val">2.07 M</span></div>
+    <div class="bar-row"><span>2560 × 1440</span><div class="bar-track"><div class="bar-fill" style="width:44.5%"></div></div><span class="bar-val">3.69 M</span></div>
+    <div class="bar-row"><span>3840 × 2160</span><div class="bar-track"><div class="bar-fill r" style="width:100%"></div></div><span class="bar-val">8.29 M</span></div>
+    <div class="bar-row"><span>budget markers</span><div class="bar-track" style="background:transparent"><div class="marker" style="left:30.2%"><span>2.5 M MSAA 4× → 2×</span></div><div class="marker" style="left:44.6%"><span>3.7 M budget</span></div></div><span class="bar-val"></span></div>
+    <div class="axis"><span>0</span><span>4 M</span><span>8.3 M</span></div>
+  </div>
+  <p class="note">The scale is the square root of the budget over the screen's pixels. A 4K screen gets √(3.7 / 8.29) ≈ 0.67. The ratio is also capped at 1.5, so a Retina laptop does not render at 2×.</p>
+
+  <h3>Triangles per frame</h3>
+  <p>The target is 250 000 triangles per frame at 60 fps. These figures come from the docs. They were not measured for this page. Measure with <code>world.html?hud=1</code> before you use them.</p>
+  <div class="bars" role="img" aria-label="Triangle budget against typical loads">
+    <div class="bar-row"><span>target</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">250k</span></div>
+    <div class="bar-row"><span>typical scene</span><div class="bar-track"><div class="bar-fill g" style="left:60%;width:20%"></div><div class="bar-fill" style="width:80%;opacity:0.35"></div></div><span class="bar-val">150–200k</span></div>
+    <div class="bar-row"><span>deep forest</span><div class="bar-track"><div class="bar-fill r" style="width:92%"></div></div><span class="bar-val">~230k</span></div>
+    <div class="axis"><span>0</span><span>125k</span><span>250k</span></div>
+  </div>
+
+  <h3>Render scale</h3>
+  <ul class="clean">
+    <li><b>Adaptive scale.</b> If frames run late, the render scale falls. It never goes below half the base.</li>
+    <li><b>Tiers.</b> The frame carries a performance tier: low, auto, or high.</li>
+    <li><b>Post-processing.</b> A light tilt-shift blur runs in the top view.</li>
+  </ul>
+</section>
+
+<section id="assets">
+  <div class="label">Assets</div>
+  <h2>Models: generated, optimized, shipped as GLB</h2>
+  <p>Every model comes from code. Two generators write the files. Each model has a code-built fallback, so the world still renders if a file fails to load.</p>
+  <div class="flow">
+    <div class="step"><b>Polystory</b>TypeScript recipe → GLB</div><div class="arrow">+</div>
+    <div class="step"><b>Blender</b>headless Python → GLB</div><div class="arrow">→</div>
+    <div class="step hot"><b>Optimize</b>hidden faces out, budgets checked</div><div class="arrow">→</div>
+    <div class="step"><b>public/models</b>3.8 MB, loaded at start</div>
+  </div>
+
+  <h3>Largest shipped files</h3>
+  <p>Size on disk in KB, twelve largest of the GLB files in <code>app/public/models</code>.</p>
+  <div class="bars" role="img" aria-label="Largest GLB files in KB: city 380, sanluca 327, autumn 289, rider 288, rider power 288, rider aero 286, trees 240, pannolato 206, cafe stop 137, rider crowd 116, meloncello 76, ape van 73">
+    <div class="bar-row"><span>city.glb</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">381 KB</span></div>
+    <div class="bar-row"><span>sanluca.glb</span><div class="bar-track"><div class="bar-fill" style="width:85.9%"></div></div><span class="bar-val">327 KB</span></div>
+    <div class="bar-row"><span>autumn.glb</span><div class="bar-track"><div class="bar-fill g" style="width:75.9%"></div></div><span class="bar-val">289 KB</span></div>
+    <div class="bar-row"><span>rider.glb</span><div class="bar-track"><div class="bar-fill g" style="width:75.6%"></div></div><span class="bar-val">288 KB</span></div>
+    <div class="bar-row"><span>rider_power.glb</span><div class="bar-track"><div class="bar-fill g" style="width:75.6%"></div></div><span class="bar-val">288 KB</span></div>
+    <div class="bar-row"><span>rider_aero.glb</span><div class="bar-track"><div class="bar-fill g" style="width:75.1%"></div></div><span class="bar-val">286 KB</span></div>
+    <div class="bar-row"><span>trees.glb</span><div class="bar-track"><div class="bar-fill g" style="width:63.2%"></div></div><span class="bar-val">240 KB</span></div>
+    <div class="bar-row"><span>pannolato.glb</span><div class="bar-track"><div class="bar-fill g" style="width:54.2%"></div></div><span class="bar-val">206 KB</span></div>
+    <div class="bar-row"><span>cafe_stop.glb</span><div class="bar-track"><div class="bar-fill a" style="width:36.0%"></div></div><span class="bar-val">137 KB</span></div>
+    <div class="bar-row"><span>rider_crowd.glb</span><div class="bar-track"><div class="bar-fill a" style="width:30.4%"></div></div><span class="bar-val">116 KB</span></div>
+    <div class="bar-row"><span>meloncello.glb</span><div class="bar-track"><div class="bar-fill a" style="width:20.1%"></div></div><span class="bar-val">76 KB</span></div>
+    <div class="bar-row"><span>ape_van.glb</span><div class="bar-track"><div class="bar-fill a" style="width:19.2%"></div></div><span class="bar-val">73 KB</span></div>
+  </div>
+  <p class="note">The shipped set is about 3.8 MB in total. Budgets and check rules are in <code>.claude/rules/world-assets.md</code>. <code>tools/asset.sh</code> runs build, check and preview for one model.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Shipped file</th><th>Made by</th></tr></thead>
+      <tbody>
+        <tr><td><code>scenery/trees.glb</code></td><td>Blender: pines, firs, round and oak trees</td></tr>
+        <tr><td><code>scenery/autumn.glb</code></td><td>Blender: autumn arches and maples, each with <code>_far</code> and <code>_dist</code> levels</td></tr>
+        <tr><td><code>scenery/rocks_bushes.glb</code></td><td>Blender: rocks and bushes</td></tr>
+        <tr><td><code>scenery/grass.glb</code></td><td>Blender: grass tufts</td></tr>
+        <tr><td><code>rider/*.glb</code></td><td>Polystory source, then <code>optimize_riders.py</code></td></tr>
+        <tr><td><code>scenery/city.glb</code> and friends</td><td>Polystory source, then <code>optimize_city.py</code></td></tr>
+        <tr><td><code>scenery/cactus.glb</code>, <code>farmhouse</code>, <code>tram</code></td><td>Polystory recipes only</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="agents">
+  <div class="label">Simulation</div>
+  <h2>Agents in one loop</h2>
+  <p>One simulation steps every moving thing near the rider once per frame. Each agent books its road space first, so no two agents share it. The order is fixed: player, tram, event, riders, cars.</p>
+
+  <div class="card">
+    <svg viewBox="0 0 760 250" role="img" aria-label="Top-down road section with lanes: player, riders, a car, the tram and an event">
+      <rect x="30" y="30" width="700" height="150" rx="6" style="fill:var(--panel);stroke:var(--line)"/>
+      <line x1="30" y1="75" x2="730" y2="75" class="lane"/>
+      <line x1="30" y1="120" x2="730" y2="120" class="lane"/>
+      <text x="40" y="24" class="m">left (overtaking side)</text>
+      <text x="600" y="24" class="m">right</text>
+      <rect x="250" y="42" width="60" height="26" rx="5" style="fill:var(--accent)"/><text x="280" y="59" text-anchor="middle" class="on-accent">you</text>
+      <rect x="400" y="42" width="50" height="26" rx="5" style="fill:var(--blue)"/><text x="425" y="59" text-anchor="middle" class="on-fill">rider</text>
+      <rect x="470" y="88" width="50" height="26" rx="5" style="fill:var(--blue);opacity:0.7"/><text x="495" y="105" text-anchor="middle" class="on-fill">rider</text>
+      <rect x="520" y="130" width="56" height="26" rx="5" style="fill:var(--muted)"/><text x="548" y="147" text-anchor="middle" class="on-fill">car</text>
+      <rect x="150" y="130" width="60" height="26" rx="5" style="fill:var(--red)"/><text x="180" y="147" text-anchor="middle" class="on-fill">event</text>
+      <rect x="600" y="42" width="110" height="26" rx="5" style="fill:var(--green)"/><text x="655" y="59" text-anchor="middle" class="on-fill">tram</text>
+      <text x="380" y="210" text-anchor="middle" class="m">Lane registry: each agent takes the nearest free place. Lanes are schematic.</text>
+      <text x="380" y="232" text-anchor="middle" class="m">Order of booking: player, tram, event, riders, cars.</text>
+    </svg>
+    <p class="cap">Schematic cross-section. Positions are illustrative.</p>
+  </div>
+
+  <h3>Agent caps</h3>
+  <div class="bars" role="img" aria-label="Agent caps: other riders 14, road cars and walkers as set in code">
+    <div class="bar-row"><span>other riders (max)</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">14</span></div>
+    <div class="bar-row"><span>event kinds</span><div class="bar-track"><div class="bar-fill a" style="width:100%"></div></div><span class="bar-val">16</span></div>
+    <div class="bar-row"><span>slot length (s)</span><div class="bar-track"><div class="bar-fill g" style="width:100%"></div></div><span class="bar-val">15</span></div>
+  </div>
+  <p>Spawners are pure. <code>traffic.ts</code>, <code>cityTraffic.ts</code>, <code>tram.ts</code> and <code>pedestrians.ts</code> decide where agents enter and how fast they go, from seeded hashes. Renderers in <code>world/view/</code> draw state only.</p>
+</section>
+
+<section id="events">
+  <div class="label">Events</div>
+  <h2>Events run in 15-second slots</h2>
+  <p>Every 15 seconds a slot may start one event, at a random time after its first 2 seconds. An event never overlaps another. Each event goes through four phases: approach, act, recover, leave.</p>
+
+  <div class="card">
+    <svg viewBox="0 0 760 180" role="img" aria-label="Timeline of 15-second slots with event phases as bars">
+      <g class="m"><text x="30" y="18">slot 1</text><text x="180" y="18">slot 2</text><text x="330" y="18">slot 3</text><text x="480" y="18">slot 4</text><text x="630" y="18">slot 5</text></g>
+      <line class="axisline" x1="30" y1="26" x2="740" y2="26"/>
+      <g class="grid"><line x1="30" y1="26" x2="30" y2="140"/><line x1="180" y1="26" x2="180" y2="140"/><line x1="330" y1="26" x2="330" y2="140"/><line x1="480" y1="26" x2="480" y2="140"/><line x1="630" y1="26" x2="630" y2="140"/><line x1="740" y1="26" x2="740" y2="140"/></g>
+      <text x="30" y="46" class="m">start window: 2 s to 15 s</text>
+      <rect x="62" y="54" width="30" height="18" rx="3" style="fill:var(--accent)"/>
+      <rect x="92" y="54" width="40" height="18" rx="3" style="fill:var(--red)"/>
+      <rect x="132" y="54" width="25" height="18" rx="3" style="fill:var(--green)"/>
+      <rect x="157" y="54" width="15" height="18" rx="3" style="fill:var(--blue)"/>
+      <text x="62" y="88" class="m">car pass</text>
+      <rect x="250" y="66" width="20" height="18" rx="3" style="fill:var(--accent)"/>
+      <rect x="270" y="66" width="30" height="18" rx="3" style="fill:var(--red)"/>
+      <rect x="300" y="66" width="20" height="18" rx="3" style="fill:var(--green)"/>
+      <text x="250" y="100" class="m">dog</text>
+      <rect x="400" y="54" width="50" height="18" rx="3" style="fill:var(--accent)"/>
+      <rect x="450" y="54" width="25" height="18" rx="3" style="fill:var(--red)"/>
+      <text x="400" y="88" class="m">honk</text>
+      <rect x="540" y="78" width="40" height="18" rx="3" style="fill:var(--accent)"/>
+      <rect x="580" y="78" width="60" height="18" rx="3" style="fill:var(--red)"/>
+      <text x="540" y="112" class="m">tractor</text>
+      <g>
+        <rect x="30" y="140" width="14" height="14" style="fill:var(--accent)"/><text x="50" y="152">approach</text>
+        <rect x="130" y="140" width="14" height="14" style="fill:var(--red)"/><text x="150" y="152">act</text>
+        <rect x="190" y="140" width="14" height="14" style="fill:var(--green)"/><text x="210" y="152">recover</text>
+        <rect x="290" y="140" width="14" height="14" style="fill:var(--blue)"/><text x="310" y="152">leave</text>
+      </g>
+      <text x="30" y="172" class="m">Illustrative. Real phase lengths differ per event kind.</text>
+    </svg>
+    <p class="cap">Illustrative timeline. The durations shown are not from the code.</p>
+  </div>
+
+  <h3>How often each kind is picked</h3>
+  <p>A slot picks a kind by weight, among the kinds whose <code>when()</code> rule holds. The chart shows the share if every kind is allowed. Car pass has weight 6, overtake 3, honk 2, and each of the other 13 kinds has 0.3. The total is 14.9.</p>
+  <div class="bars" role="img" aria-label="Share of picks by event kind: car pass 40.3 percent, overtake 20.1, honk 13.4, each of 13 other kinds 2.0">
+    <div class="bar-row"><span>car-pass</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-val">40.3 %</span></div>
+    <div class="bar-row"><span>overtake</span><div class="bar-track"><div class="bar-fill" style="width:49.8%"></div></div><span class="bar-val">20.1 %</span></div>
+    <div class="bar-row"><span>honk</span><div class="bar-track"><div class="bar-fill" style="width:33.2%"></div></div><span class="bar-val">13.4 %</span></div>
+    <div class="bar-row"><span>each of 13 others</span><div class="bar-track"><div class="bar-fill g" style="width:5.0%"></div></div><span class="bar-val">2.0 % each</span></div>
+    <div class="axis"><span>0</span><span>50 %</span><span>100 %</span></div>
+  </div>
+  <div class="chips">
+    <span class="chip">car pass</span><span class="chip">overtake</span><span class="chip">honk</span><span class="chip">reckless</span>
+    <span class="chip">tractor</span><span class="chip">fans</span><span class="chip">dog</span><span class="chip">wheel sucker</span>
+    <span class="chip">delivery</span><span class="chip">scooter</span><span class="chip">ape</span><span class="chip">sheep</span>
+    <span class="chip">ducks</span><span class="chip">cafe</span><span class="chip">photo stop</span><span class="chip">red light</span>
+  </div>
+  <p>You can force one event with <code>world.html?event=&lt;kind&gt;</code>.</p>
+</section>
+
+<section id="gaps">
+  <div class="label">Notes</div>
+  <h2>Where the docs and code disagree</h2>
+  <p>This page follows the code and <code>map.json</code>. The architecture doc is older, so it no longer matches these figures:</p>
+  <ul class="clean">
+    <li>The doc says 8 nodes, 12 edges and 10 sectors. The map has 36 nodes, 52 edges and 11 sectors.</li>
+    <li>The doc says the lap is 40 km. The default loop in <code>map.json</code> is 28.8 km.</li>
+    <li>The doc's system order is out of date. The code runs player and chase before the systems list, and the list has 13 entries.</li>
+    <li>The doc's world section has a misplaced paragraph about ground blending. It sits inside the map text.</li>
+  </ul>
+</section>
+
+<footer>
+  <p>Figures come from <code>app/src/world/road/routes/map.json</code>, the code, and the project docs, as read on 16 November 2026. Triangle figures are from the docs. Diagrams are simplified and not to scale unless noted.</p>
+</footer>
+
+</div>
