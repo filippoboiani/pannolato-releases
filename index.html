@@ -154,6 +154,7 @@
   .download .ctas { position: relative; }
   .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 36px auto 0; max-width: 900px; text-align: left; position: relative; }
   .steps div { background: rgba(255, 255, 255, 0.07); border-radius: 14px; padding: 16px 18px; font-size: 0.95rem; color: #dfe3f5; }
+  .steps div:nth-child(4) { grid-column: 1 / -1; }
   .steps b { display: block; color: var(--mustard); margin-bottom: 4px; }
 
   /* Value pillars */
@@ -448,6 +449,7 @@
       <details><summary data-i18n>What will it cost?</summary><p data-i18n>The alpha is free. After the alpha we plan one payment per season, with a free trial first. There is no subscription.</p></details>
       <details><summary data-i18n>Where is my data?</summary><p data-i18n>On your computer only: <code>~/Library/Application Support/Pannolato</code> on macOS, <code>%APPDATA%\Pannolato</code> on Windows. There is no account and no cloud copy.</p></details>
       <details><summary data-i18n>Which computers are supported?</summary><p data-i18n>Macs with Apple Silicon (M1 or newer) and 64-bit Windows PCs.</p></details>
+      <details><summary data-i18n>The trainer does not connect. What do I do?</summary><p data-i18n>Wake the trainer and close other apps that use it, such as Zwift or a phone. Check that Bluetooth is on. <a href="help.html#trainer">See all the steps</a>.</p></details>
       <details><summary data-i18n>Why do I need an access code?</summary><p data-i18n>The alpha is for a small group of testers. Enter your email in the <a href="#download">Try the alpha</a> section. We send the code to it. The app asks for the code once.</p></details>
     </div>
   </section>
@@ -469,9 +471,10 @@
           <p id="access-msg" role="status"></p>
         </form>
         <div class="steps">
-          <div data-i18n><b>macOS</b>Open the dmg and drag Pannolato to Applications. The first time, right-click the app and choose Open.</div>
+          <div data-i18n><b>macOS</b>Open the dmg and drag Pannolato to Applications. The first time, right-click the app and choose Open. If macOS still blocks it, choose Open Anyway in System Settings, Privacy &amp; Security.</div>
           <div data-i18n><b>Windows</b>Run the exe. If SmartScreen warns you, choose More info, then Run anyway.</div>
           <div data-i18n><b>Access code</b>The app asks for your access code once. If you do not have one, write to <a href="mailto:pannolato.indoor@gmail.com">pannolato.indoor@gmail.com</a>.</div>
+          <div data-i18n><b>Problems?</b>Read the <a href="help.html">install and troubleshooting guide</a>.</div>
         </div>
       </div>
     </div>
@@ -484,6 +487,7 @@
     <span>P.IVA 03761021207 · <a href="mailto:pannolato.indoor@gmail.com">pannolato.indoor@gmail.com</a></span>
     <span data-i18n>No cookies. Anonymous visit statistics with Cloudflare Web Analytics. Download clicks are counted without storing IP addresses.</span>
     <a href="https://github.com/filippoboiani/pannolato-releases#readme" data-i18n>Install guide and release notes</a>
+    <a href="help.html" data-i18n>Install and help</a>
     <a href="privacy.html" data-i18n>Privacy policy</a>
     <a href="terms.html" data-i18n>Terms of use</a>
   </div>

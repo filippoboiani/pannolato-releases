@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pannolato: install and help</title>
+<meta name="description" content="How to install Pannolato on Mac and Windows, and what to do when the trainer, the heart-rate strap or the access code does not work.">
+<link rel="icon" href="media/logo.png">
+<link rel="stylesheet" href="legal.css">
+</head>
+<body>
+<header><div class="wrap"><a class="brand" href="./"><img src="media/logo.png" alt="" width="40" height="40"><b>Pannolato</b></a></div></header>
+
+<div class="wrap">
+<main>
+  <h1>Install and help</h1>
+  <p class="meta">For the alpha version. Cannot find your problem? Write to <a href="mailto:pannolato.indoor@gmail.com">pannolato.indoor@gmail.com</a>.</p>
+
+  <h2 id="install">Install</h2>
+  <p>The alpha is not signed yet. Your computer asks you to confirm the first time you open the app. This is normal. You do it once.</p>
+
+  <h3>macOS (Apple Silicon, M1 or newer)</h3>
+  <ul>
+    <li>Open the dmg. Drag Pannolato to Applications.</li>
+    <li>Open Applications. Right-click Pannolato. Choose Open. Choose Open again in the dialog.</li>
+    <li>If macOS says the app "cannot be opened" or is "damaged", open System Settings, then Privacy &amp; Security. Scroll down and choose Open Anyway.</li>
+    <li>Still blocked? Open Terminal and run <code>xattr -cr /Applications/Pannolato.app</code>. Then open the app again.</li>
+    <li>macOS asks for Bluetooth access on first start. Choose Allow.</li>
+  </ul>
+
+  <h3>Windows (64-bit)</h3>
+  <ul>
+    <li>Run the exe.</li>
+    <li>If a blue "Windows protected your PC" window appears, choose More info, then Run anyway.</li>
+    <li>If your browser blocks the download, choose Keep in the browser's download list.</li>
+    <li>Your antivirus can check an unknown file for a few seconds. Wait for it to finish.</li>
+  </ul>
+
+  <h2 id="code">Access code</h2>
+  <ul>
+    <li>Enter your email in the Try the alpha section of the <a href="./#download">home page</a>. We send the code to it.</li>
+    <li>No email after a few minutes? Check the spam folder. Check that you typed the address right.</li>
+    <li>The app asks for the code once. Copy the code without spaces.</li>
+    <li>The code needs an internet connection the first time you enter it.</li>
+    <li>Still stuck? Write to <a href="mailto:pannolato.indoor@gmail.com">pannolato.indoor@gmail.com</a> with the email you used.</li>
+  </ul>
+
+  <h2 id="trainer">The trainer does not connect</h2>
+  <p>Do these steps in order.</p>
+  <ul>
+    <li><b>Wake the trainer.</b> Turn the pedals a few turns. Look for the Bluetooth light.</li>
+    <li><b>Close other apps.</b> Most trainers accept one control connection. Close Zwift, TrainerRoad, the maker's app (Wahoo, Tacx, Garmin) and any phone that is connected.</li>
+    <li><b>Check Bluetooth.</b> Turn it on in your computer. Turn it off and on again if the list stays empty.</li>
+    <li><b>Allow Bluetooth for Pannolato.</b> On macOS: System Settings, Privacy &amp; Security, Bluetooth, and switch Pannolato on. On Windows: Settings, Bluetooth &amp; devices, and switch Bluetooth on.</li>
+    <li><b>Pick the right entry.</b> Choose the entry named after your trainer, not a heart-rate strap or a power meter.</li>
+    <li><b>Check the trainer type.</b> The trainer must support Bluetooth FTMS, or Tacx FE-C over Bluetooth. A trainer with ANT+ only does not work. Use an ANT+ to Bluetooth adapter or the trainer's Bluetooth mode.</li>
+    <li><b>Move closer.</b> Keep the computer within 3 metres of the trainer. A USB hub or a metal frame between them can block the signal.</li>
+    <li><b>Restart.</b> Close Pannolato. Unplug the trainer for 10 seconds. Plug it in again. Open Pannolato.</li>
+  </ul>
+
+  <h2 id="trainer-issues">The trainer connects but feels wrong</h2>
+  <ul>
+    <li><b>Power is wrong or jumps.</b> Warm up the trainer for 10 minutes. Then run a spin-down in the Check the trainer page.</li>
+    <li><b>ERG does not hold the watts.</b> Open the Check the trainer page. If it says the trainer does not accept a target power, ERG workouts cannot work with this trainer.</li>
+    <li><b>ERG feels very hard at low cadence.</b> This is normal in ERG mode. Keep a steady cadence. Lower the target or use a lighter gear.</li>
+    <li><b>The connection drops during a ride.</b> Close other Bluetooth apps. Keep the computer close. Do not put it behind a screen or a metal cabinet.</li>
+  </ul>
+
+  <h2 id="hr">The heart-rate strap does not connect</h2>
+  <ul>
+    <li>Wet the strap electrodes. Wear the strap. A dry strap does not send.</li>
+    <li>Close other apps that use the strap (Garmin Connect, Zwift, a phone). Most straps accept one connection.</li>
+    <li>Polar: close the Polar Beat or Flow app on your phone, or turn Bluetooth off there.</li>
+    <li>Garmin watch: press and hold UP, open Controls, and turn on Broadcast Heart Rate. Do this before you connect.</li>
+    <li>Apple Watch: use a third-party app that sends heart rate as a Bluetooth sensor.</li>
+    <li>Wrist sensors react slowly. Expect a delay of some seconds. A chest strap is better.</li>
+  </ul>
+
+  <h2 id="ride">During a ride</h2>
+  <ul>
+    <li><b>The world looks slow or jumpy.</b> Close other heavy apps. Plug in a laptop. Use a lower quality setting if the app offers it.</li>
+    <li><b>No sound.</b> Check the computer volume and the output device.</li>
+    <li><b>Group ride: I cannot join.</b> Check your internet connection. Check the 6-character room code. Group rides need internet. Solo rides do not.</li>
+  </ul>
+
+  <h2 id="upload">Strava and Garmin</h2>
+  <ul>
+    <li><b>Strava does not connect.</b> The Strava API needs a Strava subscription. Without one, choose Upload by hand after the ride. Pannolato saves the FIT file and opens the Strava upload page. Drop the file there.</li>
+    <li><b>Garmin Connect.</b> There is nothing to connect. After a ride, choose Send to Garmin Connect. Drop the saved FIT file on the import page.</li>
+    <li><b>Ride not saved.</b> Rides shorter than one minute are not saved.</li>
+  </ul>
+
+  <h2 id="data">Your data</h2>
+  <ul>
+    <li>macOS: <code>~/Library/Application Support/Pannolato</code></li>
+    <li>Windows: <code>%APPDATA%\Pannolato</code></li>
+    <li>There is no account and no cloud copy. Deleting this folder removes all your rides.</li>
+  </ul>
+</main>
+
+<footer>
+  <a href="./">Home</a>
+  <a href="privacy.html">Privacy policy</a>
+  <a href="terms.html">Terms of use</a>
+</footer>
+</div>
+</body>
+</html>
