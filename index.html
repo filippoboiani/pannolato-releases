@@ -64,6 +64,10 @@
   .btn.primary { background: var(--mustard); color: var(--ink-dark); box-shadow: 3px 5px 0 var(--mustard-dark); }
   .btn.dark { background: var(--ink); color: var(--white); box-shadow: 3px 5px 0 #8f93cf; }
   .btn.small { padding: 9px 16px; font-size: 0.95rem; }
+  .access-form { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 18px 0; }
+  .access-form input[type="email"] { flex: 1 1 240px; max-width: 360px; padding: 12px 14px; font: inherit; border: 2px solid var(--ink); border-radius: 12px; }
+  .access-form .hp { position: absolute; left: -9999px; }
+  #access-msg:empty { display: none; }
   .btn:hover { transform: translate(1px, 2px); }
   .btn:active { transform: translate(2px, 4px); box-shadow: 1px 1px 0 var(--mustard-dark); }
   .btn.dark:active { box-shadow: 1px 1px 0 #8f93cf; }
@@ -443,7 +447,7 @@
       <details><summary data-i18n>What will it cost?</summary><p data-i18n>The alpha is free. After the alpha we plan one payment per season, with a free trial first. There is no subscription.</p></details>
       <details><summary data-i18n>Where is my data?</summary><p data-i18n>On your computer only: <code>~/Library/Application Support/Pannolato</code> on macOS, <code>%APPDATA%\Pannolato</code> on Windows. There is no account and no cloud copy.</p></details>
       <details><summary data-i18n>Which computers are supported?</summary><p data-i18n>Macs with Apple Silicon (M1 or newer) and 64-bit Windows PCs.</p></details>
-      <details><summary data-i18n>Why do I need an access code?</summary><p data-i18n>The alpha is for a small group of testers. Use the <a href="#download">Request an access code</a> button to send a ready-made email. The app asks for the code once.</p></details>
+      <details><summary data-i18n>Why do I need an access code?</summary><p data-i18n>The alpha is for a small group of testers. Enter your email in the <a href="#download">Try the alpha</a> section. We send the code to it. The app asks for the code once.</p></details>
     </div>
   </section>
 
@@ -456,10 +460,13 @@
           <a class="btn primary" href="https://pannolato-relay.pannolato.workers.dev/dl/mac" data-i18n>Download for Mac</a>
           <a class="btn primary" href="https://pannolato-relay.pannolato.workers.dev/dl/win" data-i18n>Download for Windows</a>
         </div>
-        <p data-i18n>Need an access code? Send the ready-made email below. It opens in your mail app.</p>
-        <div class="ctas">
-          <a class="btn dark" target="_blank" rel="noopener" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=pannolato.indoor%40gmail.com&amp;su=Pannolato%20alpha%20access%20code&amp;body=Hi%2C%0A%0APlease%20send%20me%20an%20access%20code%20for%20the%20Pannolato%20alpha.%0A%0AMy%20computer%3A%20(macOS%20Apple%20Silicon%20or%20Windows)%0A%0AThank%20you." data-i18n>Request an access code</a>
-        </div>
+        <p data-i18n>Need an access code? Enter your email. We send the code to it.</p>
+        <form class="access-form" id="access-form" method="post">
+          <input type="email" name="email" required autocomplete="email" placeholder="you@example.com" aria-label="Your email">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp">
+          <button class="btn dark" type="submit" data-i18n>Send my access code</button>
+          <p id="access-msg" role="status"></p>
+        </form>
         <div class="steps">
           <div data-i18n><b>macOS</b>Open the dmg and drag Pannolato to Applications. The first time, right-click the app and choose Open.</div>
           <div data-i18n><b>Windows</b>Run the exe. If SmartScreen warns you, choose More info, then Run anyway.</div>
@@ -791,17 +798,17 @@
 "it": "Perché serve un codice di accesso?",
 "es": "¿Por qué necesito un código de acceso?"
 },
-"The alpha is for a small group of testers. Use the <a href=\"#download\">Request an access code</a> button to send a ready-made email. The app asks for the code once.": {
-"it": "L'alpha è per un piccolo gruppo di tester. Usa il pulsante <a href=\"#download\">Richiedi un codice di accesso</a> per inviare un'email già pronta. L'app chiede il codice una sola volta.",
-"es": "La alpha es para un grupo pequeño de testers. Usa el botón <a href=\"#download\">Pedir un código de acceso</a> para enviar un correo ya listo. La app pide el código una sola vez."
+"Enter your email in the <a href=\"#download\">Try the alpha</a> section. We send the code to it. The app asks for the code once.": {
+"it": "Inserisci la tua email nella sezione <a href=\"#download\">Prova l'alpha</a>. Ti inviamo il codice. L'app chiede il codice una sola volta.",
+"es": "Escribe tu correo en la sección <a href=\"#download\">Prueba la alpha</a>. Te enviamo el código. La app pide el código una sola vez."
 },
-"Need an access code? Send the ready-made email below. It opens in your mail app.": {
-"it": "Ti serve un codice di accesso? Invia l'email già pronta qui sotto. Si apre nella tua app di posta.",
-"es": "¿Necesitas un código de acceso? Envía el correo ya listo de abajo. Se abre en tu app de correo."
+"Need an access code? Enter your email. We send the code to it.": {
+"it": "Ti serve un codice di accesso? Inserisci la tua email. Ti inviamo il codice.",
+"es": "¿Necesitas un código de acceso? Escribe tu correo. Te enviamos el código."
 },
-"Request an access code": {
-"it": "Richiedi un codice di accesso",
-"es": "Pedir un código de acceso"
+"Send my access code": {
+"it": "Inviami il codice di accesso",
+"es": "Envíame el código de acceso"
 },
 "Try the alpha": {
 "it": "Prova l'alpha",
@@ -876,6 +883,23 @@
 })();
 </script>
 <!-- Cloudflare Web Analytics: cookieless page-view stats (privacy policy, section 3). -->
+<script>
+// Set after you deploy tools/access-code-mailer.gs as a web app (see the file header).
+const ACCESS_FORM_URL = "PASTE_WEB_APP_URL_HERE";
+document.getElementById("access-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.currentTarget, msg = document.getElementById("access-msg");
+  msg.textContent = "Sending...";
+  try {
+    // no-cors: the page cannot read the reply. The mailer checks the address itself.
+    await fetch(ACCESS_FORM_URL, { method: "POST", mode: "no-cors", body: new URLSearchParams(new FormData(form)) });
+    msg.textContent = "Sent. Check your inbox in a few minutes. No mail? Check spam, or write to pannolato.indoor@gmail.com.";
+    form.reset();
+  } catch {
+    msg.textContent = "Could not send. Write to pannolato.indoor@gmail.com.";
+  }
+});
+</script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "c6a4f3487c094c5e929aa57c2af24143"}'></script>
 </body>
 </html>
