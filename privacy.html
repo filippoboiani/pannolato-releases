@@ -13,7 +13,7 @@
 <div class="wrap">
 <main>
   <h1>Privacy policy</h1>
-  <p class="meta">Effective date: 10 November 2026</p>
+  <p class="meta">Effective date: 18 November 2026</p>
 
   <p>Pannolato is an indoor cycling app for macOS and Windows. We collect as little personal data as we can. Your rides, workouts and settings stay on your computer. This policy tells you which data we process, why, and for how long.</p>
 
@@ -61,6 +61,12 @@
         <td>The hashes are deleted after midnight UTC of the same day. We keep only totals per platform, version and day.</td>
       </tr>
       <tr>
+        <td>Alpha versions only: the app had a problem and you click Send in the crash log question</td>
+        <td>The crash log: app version, operating system, computer and graphics card model, and error messages. Paths show your home folder as "~". Your IP address (for a rate limit).</td>
+        <td>To find and fix the problem. Your consent, Art. 6(1)(a) GDPR. The app asks each time and sends nothing if you click Don't send.</td>
+        <td>The log is stored on our relay (Cloudflare) and only the developer can read it. It is deleted when the problem is fixed, at the latest 90 days after it arrives. The rate limit forgets the IP address within minutes, and the IP address is not stored with the log.</td>
+      </tr>
+      <tr>
         <td>You join a group ride</td>
         <td>The display name and colour you choose, a random rider id, your live distance, speed, cadence and power, and your IP address (needed for the connection)</td>
         <td>To show you and the other riders in the same room to each other. Performance of a contract, Art. 6(1)(b) GDPR.</td>
@@ -88,7 +94,7 @@
 
   <h2>5. Service providers</h2>
   <ul>
-    <li><b>Cloudflare, Inc.</b> (USA): runs the download links, the group ride relay and the visit statistics (<a href="https://www.cloudflare.com/privacypolicy/">Cloudflare privacy policy</a>).</li>
+    <li><b>Cloudflare, Inc.</b> (USA): runs the download links, the group ride relay, the crash log storage of alpha versions and the visit statistics (<a href="https://www.cloudflare.com/privacypolicy/">Cloudflare privacy policy</a>).</li>
     <li><b>GitHub, Inc.</b> (USA): hosts this website and the app downloads.</li>
     <li><b>Lemon Squeezy</b> (USA): reseller and licence server, when sales start.</li>
   </ul>
