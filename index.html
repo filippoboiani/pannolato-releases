@@ -1,14 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-type="software">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pannolato: indoor cycling, the Italian way</title>
-<meta name="description" content="Indoor cycling app for macOS and Windows. Ride Bologna and Emilia: the city, vineyard hills, the Apennines, woods and the river plain. Pick your road at every junction. No subscription, works offline, your data stays on your computer.">
+<meta name="description" content="Indoor cycling app for macOS and Windows. Ride more than 190 km of road in Bologna and Emilia: 16 routes, the Imola circuit, the Adriatic coast and the Apennines. No subscription, works offline, your data stays on your computer.">
+<meta name="page-type" content="software">
+<meta name="site-kind" content="software">
 <meta property="og:title" content="Pannolato">
 <meta property="og:description" content="Indoor cycling, the Italian way. No subscription, works offline, your data stays yours.">
 <meta property="og:image" content="https://filippoboiani.github.io/pannolato-releases/media/ride.jpg">
 <link rel="icon" href="media/logo.png">
+<script>document.documentElement.classList.add("m-enter")</script>
 <link rel="preload" href="media/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Self-hosted (SIL OFL): the page makes no calls to third parties. */
@@ -28,7 +31,6 @@
     --shadow: 5px 6px 0 var(--print);
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
   body {
     margin: 0; color: var(--ink); background: var(--sky); background-color: #d0cdf0;
     font: 17px/1.55 "Bricolage Grotesque", system-ui, sans-serif;
@@ -57,7 +59,7 @@
   /* Buttons */
   .btn {
     display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 14px;
-    font-weight: 800; font-size: 1.05rem; text-decoration: none; white-space: nowrap;
+    font: inherit; font-weight: 800; font-size: 1.05rem; text-decoration: none; white-space: nowrap; border: 0; cursor: pointer;
     transition: transform 0.08s, box-shadow 0.08s;
   }
   .btn svg { width: 20px; height: 20px; flex: none; }
@@ -65,9 +67,10 @@
   .btn.dark { background: var(--ink); color: var(--white); box-shadow: 3px 5px 0 #8f93cf; }
   .btn.small { padding: 9px 16px; font-size: 0.95rem; }
   .access-form { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 18px 0; }
-  .access-form input[type="email"] { flex: 1 1 240px; max-width: 360px; padding: 12px 14px; font: inherit; border: 2px solid var(--ink); border-radius: 12px; }
+  .access-form { align-items: flex-end; }
+  .access-form input[type="email"] { padding: 12px 14px; font: inherit; border: 2px solid var(--ink); border-radius: 12px; }
   .access-form .hp { position: absolute; left: -9999px; }
-  #access-msg:empty { display: none; }
+  #access-msg:empty, #wait-msg:empty { display: none; }
   .btn:hover { transform: translate(1px, 2px); }
   .btn:active { transform: translate(2px, 4px); box-shadow: 1px 1px 0 var(--mustard-dark); }
   .btn.dark:active { box-shadow: 1px 1px 0 #8f93cf; }
@@ -91,7 +94,7 @@
     border-radius: var(--radius); overflow: hidden; background: var(--ink-dark);
     border: 3px solid var(--ink-dark); box-shadow: 8px 10px 0 var(--print);
   }
-  .video { margin: 44px auto 0; max-width: 1040px; aspect-ratio: 16 / 9; }
+  .video { margin: 44px auto 0; max-width: 1040px; aspect-ratio: 16 / 9; position: relative; }
   .video video { width: 100%; height: 100%; object-fit: cover; }
 
   /* Feature rows */
@@ -100,8 +103,8 @@
     margin: 0 0 12px; color: var(--ink-dark); font-size: clamp(1.9rem, 4vw, 2.8rem);
     line-height: 1.05; font-weight: 800; letter-spacing: -0.03em;
   }
-  .kicker { color: var(--blue); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.06em; text-transform: uppercase; }
-  .row { display: grid; grid-template-columns: 5fr 7fr; gap: 56px; align-items: center; }
+  .kicker { color: #3443b0; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .row { display: grid; grid-template-columns: 5fr 7fr; gap: 56px; align-items: start; }
   .row + .row { margin-top: 96px; }
   .row.flip { grid-template-columns: 7fr 5fr; }
   .row.flip .text { order: 2; }
@@ -113,6 +116,26 @@
     border-radius: 3px; background: var(--blue); box-shadow: 2px 2px 0 var(--print);
   }
   .shot { border-width: 2px; box-shadow: var(--shadow); background: var(--white); }
+  /* Clips: a looped, muted video in a frame, with a pause button. */
+  .clip { position: relative; aspect-ratio: 16 / 9; background: var(--ink-dark); }
+  .clip video { width: 100%; height: 100%; object-fit: cover; }
+  .pause {
+    position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; border: 0; border-radius: 12px; cursor: pointer;
+    background: var(--ink); color: var(--white); display: grid; place-items: center; box-shadow: 2px 3px 0 #8f93cf;
+  }
+  .pause svg { width: 18px; height: 18px; }
+  .pause .play, .pause[aria-pressed="true"] .stop { display: none; }
+  .pause[aria-pressed="true"] .play { display: block; }
+  .pause[aria-pressed="true"] { inset: 0; margin: auto; width: 76px; height: 76px; border-radius: 50%; background: var(--mustard); color: var(--ink-dark); box-shadow: 3px 5px 0 var(--mustard-dark); }
+  .pause[aria-pressed="true"] svg { width: 30px; height: 30px; }
+  .pause:focus-visible { outline: 3px solid var(--mustard); outline-offset: 3px; }
+  /* The hero enters once on load. */
+  @keyframes enter { from { opacity: 0; transform: translateY(14px); } }
+  .m-enter [data-enter] > * { animation: enter 0.5s ease-out both; }
+  .m-enter [data-enter] > :nth-child(n+3) { animation-delay: 0.08s; }
+  .m-enter [data-enter] > :nth-child(n+5) { animation-delay: 0.16s; }
+  .field { display: flex; flex-direction: column; gap: 6px; flex: 1 1 240px; max-width: 360px; text-align: left; font-weight: 600; font-size: 0.9rem; color: #dfe3f5; }
+  .field input { width: 100%; }
 
   /* Easter egg: click the logo three times. A reckless driver passes. */
   #egg { position: fixed; left: 0; bottom: 18px; z-index: 50; pointer-events: none; display: none; width: 190px; transform: translateX(-220px); }
@@ -152,9 +175,10 @@
   .download h2 { color: var(--white); position: relative; }
   .download p { color: #c6cbe6; max-width: 56ch; margin: 0 auto; position: relative; }
   .download .ctas { position: relative; }
-  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 36px auto 0; max-width: 900px; text-align: left; position: relative; }
+  .steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin: 36px auto 0; max-width: 900px; text-align: left; position: relative; }
   .steps div { background: rgba(255, 255, 255, 0.07); border-radius: 14px; padding: 16px 18px; font-size: 0.95rem; color: #dfe3f5; }
-  .steps div:nth-child(4) { grid-column: 1 / -1; }
+  .steps div { grid-column: span 2; }
+  .steps div:nth-child(n+4) { grid-column: span 3; }
   .steps b { display: block; color: var(--mustard); margin-bottom: 4px; }
 
   /* Value pillars */
@@ -194,14 +218,14 @@
   code { font-size: 0.9em; background: rgba(255,255,255,0.7); padding: 1px 6px; border-radius: 6px; }
 
   /* What is a pannolato */
-  .what-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 56px; align-items: center; }
+  .what-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 56px; align-items: start; }
   .what .text p { color: var(--grey); margin: 0 0 14px; }
   .what em { font-style: italic; color: var(--ink-dark); font-weight: 600; }
   .what .closing {
     margin-top: 22px; padding: 6px 0 6px 18px; border-left: 5px solid var(--mustard);
     color: var(--ink-dark) !important; font-size: 1.15rem; font-weight: 600; line-height: 1.5;
   }
-  .guide { position: relative; background: var(--white); border: 3px solid var(--ink-dark); border-radius: 22px; padding: 64px 26px 22px; box-shadow: 8px 10px 0 var(--print); }
+  .guide { position: relative; background: var(--white); border: 3px solid var(--ink-dark); border-radius: 22px; padding: 64px 26px 22px; box-shadow: 8px 10px 0 var(--print); margin-top: 48px; }
   .guide img { position: absolute; top: -48px; left: 22px; width: 96px; height: 96px; filter: drop-shadow(4px 5px 0 var(--print)); }
   .guide h3 { margin: 0 0 10px; font-size: 1.35rem; color: var(--ink-dark); letter-spacing: -0.01em; }
   .guide ul { margin: 0; padding: 0; list-style: none; }
@@ -229,6 +253,7 @@
   footer { padding: 40px 0 56px; color: var(--grey); font-size: 0.9rem; }
   footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 
+  @media (max-width: 1080px) { nav { display: none; } }
   @media (max-width: 900px) {
     .row, .row.flip { grid-template-columns: 1fr; gap: 28px; }
     .row.flip .text { order: 0; }
@@ -238,8 +263,9 @@
     nav { gap: 14px; }
     nav a { white-space: nowrap; }
     .cards, .steps { grid-template-columns: 1fr; }
+    .steps div, .steps div:nth-child(n+4) { grid-column: auto; }
     .pillars { grid-template-columns: 1fr 1fr; }
-    .what-grid { grid-template-columns: 1fr; gap: 72px; }
+    .what-grid { grid-template-columns: 1fr; gap: 24px; }
     .coach { grid-template-columns: 1fr; justify-items: center; text-align: center; }
     .coach img { width: 110px; height: 110px; }
     .bubble::before { left: 50%; top: -16px; margin-left: -13px; transform: rotate(135deg); }
@@ -257,8 +283,8 @@
     footer a { display: inline-flex; align-items: center; min-height: 44px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
     .btn { transition: none; }
+    .m-enter [data-enter] > * { animation: none; }
   }
 </style>
 </head>
@@ -266,16 +292,17 @@
 <div id="egg" aria-hidden="true"><span data-i18n>Beep beep! I am riding here!</span>
 <svg viewBox="0 0 190 80"><path d="M10 56 L16 36 Q20 28 32 28 L62 14 Q70 10 84 10 L130 10 Q142 10 150 20 L166 34 Q180 38 182 50 L182 58 Z" fill="#b9b6ad" stroke="#222" stroke-width="3" stroke-linejoin="round"/><path d="M70 18 L86 18 L86 34 L52 34 Z M94 18 L128 18 L146 34 L94 34 Z" fill="#1d2a30" stroke="#222" stroke-width="2"/><rect x="8" y="42" width="8" height="8" rx="2" fill="#d33"/><circle cx="46" cy="60" r="14" fill="#222"/><circle cx="46" cy="60" r="6" fill="#999"/><circle cx="146" cy="60" r="14" fill="#222"/><circle cx="146" cy="60" r="6" fill="#999"/></svg></div>
 
-<header>
+<header id="top">
   <div class="wrap">
-    <a class="brand" href="#"><img src="media/logo.png" alt="" width="44" height="44"><b>Pannolato</b></a>
+    <a class="brand" href="#top"><img src="media/logo.png" alt="" width="44" height="44"><b>Pannolato</b></a>
     <nav aria-label="Sections">
-      <a href="#why" data-i18n>Why Pannolato</a>
       <a href="#train" data-i18n>Train</a>
+      <a href="#routes" data-i18n>Routes</a>
       <a href="#world" data-i18n>World</a>
+      <a href="#imola" data-i18n>Imola</a>
+      <a href="#feedback" data-i18n>Feedback</a>
       <a href="#pannolato" data-i18n>Pannolato?</a>
       <a href="#faq" data-i18n>FAQ</a>
-      <a href="#download" data-i18n>Access code</a>
     </nav>
     <div class="head-end">
       <select id="lang" class="lang" aria-label="Language">
@@ -289,10 +316,10 @@
 </header>
 
 <main>
-  <div class="hero wrap">
+  <div class="hero wrap" data-enter>
     <span class="tag" data-i18n>Made in Bologna &middot; free alpha for macOS and Windows</span>
     <h1 data-i18n>Indoor cycling, the Italian way</h1>
-    <p class="lede" data-i18n>Ride Bologna and Emilia with Il Pannolato, your coach. Pick your road at every junction. One price per season, no subscription. It works offline, and your rides stay on your computer.</p>
+    <p class="lede" data-i18n>Ride more than 190 km of road in Bologna and Emilia with Il Pannolato, your coach. Pick one of 16 routes, or choose your road at every junction. One price per season, no subscription. It works offline, and your rides stay on your computer.</p>
     <div class="ctas">
       <a class="btn primary" href="https://pannolato-relay.pannolato.workers.dev/dl/mac">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.3.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.8-4.1zM13.9 5.1c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/></svg>
@@ -303,10 +330,10 @@
         <span data-i18n>Download for Windows</span>
       </a>
     </div>
-    <p class="note" data-i18n>macOS needs Apple Silicon. You need an access code to start the alpha.</p>
+    <p class="note" data-i18n>Intel Mac? Get the <a href="https://pannolato-relay.pannolato.workers.dev/dl/macintel">Intel build</a>. You need an access code to start the alpha.</p>
 
     <div class="frame video">
-      <video src="media/tour.mp4" poster="media/poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="A ride through the Pannolato world"></video>
+      <video data-clip src="media/tour.mp4" poster="media/poster.webp" autoplay muted loop playsinline preload="metadata" width="960" height="540" aria-label="A ride through the centre of Bologna: past Piazza Maggiore, then down the street to the Two Towers"></video><button class="pause" type="button" aria-pressed="true" aria-label="Play the video"><svg class="stop" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg><svg class="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg></button>
     </div>
   </div>
 
@@ -365,27 +392,70 @@
           <h2 data-i18n>Workouts that set the watts for you</h2>
           <p data-i18n>Connect a smart trainer and a heart-rate strap over Bluetooth. Pannolato sets the resistance for each step in ERG mode, so you only pedal.</p>
           <ul>
-            <li data-i18n>A library of workouts: endurance, tempo, sweet spot, threshold, VO2max, sprints</li>
+            <li data-i18n>70 library workouts, from recovery rides to VO2max and sprints</li>
+            <li data-i18n>Search by what you want: &ldquo;short hard session&rdquo;, &ldquo;45 min endurance&rdquo;, &ldquo;climbing&rdquo;</li>
             <li data-i18n>Build your own workout, or upload one as JSON</li>
             <li data-i18n>A heart-rate cap warns you when you ride too hard</li>
             <li data-i18n>Change the target by ±5 W from the keyboard at any time</li>
           </ul>
         </div>
-        <img class="frame shot" loading="lazy" src="media/workouts.jpg" alt="The Workouts page: a list of workouts and the steps of one workout with its power targets" width="1600" height="1000" >
+        <img class="frame shot" loading="lazy" srcset="media/workouts-s.webp 720w, media/workouts.webp 1288w" sizes="(max-width: 900px) calc(100vw - 32px), 644px" src="media/workouts.webp" alt="The Workouts page: a search box, type filters, and one threshold workout with its steps and power targets" width="1288" height="805">
       </div>
 
       <div class="row flip">
         <div class="text">
+          <div class="kicker" data-i18n>Plan</div>
+          <h2 data-i18n>A training plan from six answers</h2>
+          <p data-i18n>Give Pannolato your goal, the weeks you have, the days you ride, the minutes per ride, your level and a start date. It builds a plan of 4, 6, 8 or 12 weeks from the workout library.</p>
+          <ul>
+            <li data-i18n>The Today page opens on the workout of the day</li>
+            <li data-i18n>Busy day? Make it a rest day, or push the plan by one day</li>
+            <li data-i18n>The plan page shows your progress, the week you are in and the next session</li>
+            <li data-i18n>Or import a plan that ChatGPT writes from our prompt</li>
+          </ul>
+        </div>
+        <img class="frame shot" loading="lazy" srcset="media/plan-s.webp 720w, media/plan.webp 1288w" sizes="(max-width: 900px) calc(100vw - 32px), 644px" src="media/plan.webp" alt="The Training plan page: an 8-week plan with a progress ring, the week of the plan, and the sessions of week 1 with their power charts" width="1288" height="805">
+      </div>
+
+      <div class="row">
+        <div class="text">
           <div class="kicker" data-i18n>Ride</div>
           <h2 data-i18n>Everything you need on one screen</h2>
-          <p data-i18n>Power, heart rate, cadence and speed sit at the top. The next steps, the climb ahead and your laps sit on the sides. A small coach cheers you on.</p>
+          <p data-i18n>Power, heart rate, cadence and speed sit at the top. The workout steps sit on the left. The mini-map, the climb ahead and your laps sit on the right. Il Pannolato comments from the corner.</p>
           <ul>
             <li data-i18n>Speed comes from your power and the gradient of the road</li>
             <li data-i18n>The trainer makes the hills feel like hills</li>
             <li data-i18n>Switch between rider view and a top view of the map</li>
           </ul>
         </div>
-        <img class="frame shot" loading="lazy" src="media/ride.jpg" alt="The ride screen: the rider on a city street with power, heart rate and workout steps on top" width="1600" height="1000" >
+        <img class="frame shot" loading="lazy" srcset="media/ride-s.webp 720w, media/ride.webp 1288w" sizes="(max-width: 900px) calc(100vw - 32px), 644px" src="media/ride.webp" alt="The ride screen on the San Luca climb: power and heart rate on top, the workout steps on the left, the mini-map and the climb profile on the right" width="1288" height="805">
+      </div>
+    </div>
+  </section>
+
+  <section id="routes">
+    <div class="wrap">
+      <div class="row">
+        <div class="text">
+          <div class="kicker" data-i18n>Routes</div>
+          <h2 data-i18n>16 routes, each with a map preview</h2>
+          <p data-i18n>Pick a loop before you ride. The route picker shows its distance and its climb, and draws it on the map.</p>
+          <ul>
+            <li data-i18n>Flat, hilly and mountain loops, from 4.9 km to 58.1 km</li>
+            <li data-i18n>The Bologna ring roads, the Riviera, the Po delta, San Luca, the Futa pass, Sestola</li>
+            <li data-i18n>Or start a free ride and choose your road at every junction</li>
+            <li data-i18n>Take another turn at any time: the ride goes on as a free ride</li>
+          </ul>
+        </div>
+        <img class="frame shot" loading="lazy" srcset="media/routes-s.webp 720w, media/routes.webp 1180w" sizes="(max-width: 900px) calc(100vw - 32px), 644px" src="media/routes.webp" alt="The route picker: a list of routes with distance and climb, and the Riviera Romagnola loop drawn in blue on the map" width="1180" height="783">
+      </div>
+
+      <div class="row flip">
+        <div class="text">
+          <h2 data-i18n>One map, from the Po to the Apennines</h2>
+          <p data-i18n>The World page shows every road, 15 areas, 11 rivers and 2 lakes. The Po runs along the north edge and the Adriatic Sea along the east. During a ride, the mini-map shows where you are and how far the next fork is.</p>
+        </div>
+        <img class="frame shot" loading="lazy" srcset="media/map-s.webp 720w, media/map.webp 808w" sizes="(max-width: 900px) calc(100vw - 32px), 644px" src="media/map.webp" alt="The world map: roads between Modena, Ferrara, Bologna, Imola, Rimini and Pesaro, with the Po in the north and the sea in the east" width="808" height="762">
       </div>
     </div>
   </section>
@@ -393,22 +463,28 @@
   <section id="world" class="scenery">
     <div class="wrap">
       <div class="kicker" data-i18n>World</div>
-      <h2 data-i18n>Bologna and Emilia, and you pick the road</h2>
-      <p class="lede" style="margin:0" data-i18n>Start under the arcades of Bologna and climb to San Luca. Then choose your way: vineyard hills, the Apennines, deep woods, the river plain or the Adriatic coast.</p>
+      <h2 data-i18n>Bologna and Emilia, town by town</h2>
+      <p class="lede" style="margin:0" data-i18n>Start under the arcades of Bologna and climb to San Luca. Ride through Modena, Ferrara, Imola and Rimini, follow the Adriatic coast, or climb into the Apennines.</p>
       <div class="strip">
-        <figure><img loading="lazy" srcset="media/s-w-city.jpg 800w, media/w-city.jpg 1280w" sizes="(max-width: 560px) 50vw, 20vw" src="media/w-city.jpg" alt="A wide city avenue with trees, seen from behind the rider" width="1280" height="633"><figcaption data-i18n>Bologna</figcaption></figure>
-        <figure><img loading="lazy" srcset="media/s-w-sanluca.jpg 800w, media/w-sanluca.jpg 1280w" sizes="(max-width: 560px) 50vw, 20vw" src="media/w-sanluca.jpg" alt="A road bending between green fields and pine trees on the way to San Luca" width="1280" height="633"><figcaption data-i18n>San Luca</figcaption></figure>
-        <figure><img loading="lazy" srcset="media/s-w-plain.jpg 800w, media/w-plain.jpg 1280w" sizes="(max-width: 560px) 50vw, 20vw" src="media/w-plain.jpg" alt="A flat road through farmland on the river plain" width="1280" height="633"><figcaption data-i18n>River plain</figcaption></figure>
-        <figure><img loading="lazy" srcset="media/s-w-apennines.jpg 800w, media/w-apennines.jpg 1280w" sizes="(max-width: 560px) 50vw, 20vw" src="media/w-apennines.jpg" alt="A mountain road under a steep rock wall with a village ahead" width="1280" height="633"><figcaption data-i18n>Apennines</figcaption></figure>
-        <figure><img loading="lazy" srcset="media/s-w-woods.jpg 800w, media/w-woods.jpg 1280w" sizes="(max-width: 560px) 50vw, 20vw" src="media/w-woods.jpg" alt="A road through autumn woods" width="1280" height="633"><figcaption data-i18n>Woods</figcaption></figure>
+        <figure><img loading="lazy" srcset="media/st-city-s.webp 344w, media/st-city.webp 448w" sizes="(max-width: 900px) 50vw, 221px" src="media/st-city.webp" alt="A paved street in the centre of Bologna, with arcades on the right and Piazza Santo Stefano ahead" width="448" height="560"><figcaption data-i18n>Bologna</figcaption></figure>
+        <figure><img loading="lazy" srcset="media/st-sanluca-s.webp 344w, media/st-sanluca.webp 448w" sizes="(max-width: 900px) 50vw, 221px" src="media/st-sanluca.webp" alt="The road to San Luca beside the long portico, with yellow fields on the right" width="448" height="560"><figcaption data-i18n>San Luca</figcaption></figure>
+        <figure><img loading="lazy" srcset="media/st-ferrara-s.webp 344w, media/st-ferrara.webp 448w" sizes="(max-width: 900px) 50vw, 221px" src="media/st-ferrara.webp" alt="A street between red brick houses in Ferrara, with a tower at its end" width="448" height="560"><figcaption data-i18n>Ferrara</figcaption></figure>
+        <figure><img loading="lazy" srcset="media/st-coast-s.webp 344w, media/st-coast.webp 448w" sizes="(max-width: 900px) 50vw, 221px" src="media/st-coast.webp" alt="The quay of the canal harbour in Cesenatico, with coloured houses" width="448" height="560"><figcaption data-i18n>Adriatic coast</figcaption></figure>
+        <figure><img loading="lazy" srcset="media/st-apennines-s.webp 344w, media/st-apennines.webp 448w" sizes="(max-width: 900px) calc(100vw - 32px), 221px" src="media/st-apennines.webp" alt="A mountain road in the Apennines with snow on its edges and far ridges" width="448" height="560"><figcaption data-i18n>Apennines</figcaption></figure>
       </div>
 
       <div class="row" style="margin-top:96px">
         <div class="text">
-          <h2 data-i18n>Ten areas, one map</h2>
-          <p data-i18n>Bologna, San Luca, the Reno plain, the vineyard hills, the Apennines, woods, villages and the coast sit on one map. At each junction you choose where to go next.</p>
+          <h2 data-i18n>New light, water and road detail</h2>
+          <p data-i18n>The world now has shade in its corners, haze in its valleys, and trees and water that move.</p>
+          <ul>
+            <li data-i18n>Baked ambient occlusion and soft shadows</li>
+            <li data-i18n>Height fog, and one colour grade for the whole picture</li>
+            <li data-i18n>Trees and grass sway in the wind; rivers and canals ripple</li>
+            <li data-i18n>Guardrails on tight bends, edge posts, and worn paint on the road</li>
+          </ul>
         </div>
-        <img class="frame shot" loading="lazy" src="media/map.svg" alt="Top-down map of the roads, coloured by area and named: Bologna, San Luca, Reno plain, Vineyard hills, Apennines, Woods, Villages, Adriatic coast, River woods and Deep forest" width="1000" height="1000">
+        <img class="frame shot" loading="lazy" srcset="media/w-look-s.webp 720w, media/w-look.webp 1280w" sizes="(max-width: 900px) calc(100vw - 32px), 644px" src="media/w-look.webp" alt="A coast road above the sea with a guardrail, a stone wall, pine trees and soft shadows" width="1280" height="720">
       </div>
 
       <div class="row flip">
@@ -416,26 +492,88 @@
           <h2 data-i18n>Things happen on the road</h2>
           <p data-i18n>A tractor pulls out. A dog gives chase. Fans cheer at the top of a climb. And now and then, a driver passes far too close.</p>
         </div>
-        <img class="frame shot" loading="lazy" src="media/w-fans.jpg" alt="Fans standing beside the road on a climb, as the rider passes" width="1280" height="633">
+        <img class="frame shot" loading="lazy" srcset="media/w-tractor-s.webp 720w, media/w-tractor.webp 1280w" sizes="(max-width: 900px) calc(100vw - 32px), 644px" src="media/w-tractor.webp" alt="A red tractor on the verge of a road between vineyards, as the rider passes it" width="1280" height="720">
+      </div>
+    </div>
+  </section>
+
+  <section id="imola">
+    <div class="wrap">
+      <div class="row">
+        <div class="text">
+          <div class="kicker" data-i18n>Imola</div>
+          <h2 data-i18n>The Imola circuit, built on surveyed track data</h2>
+          <p data-i18n>Ride a lap of the Autodromo: 4.9 km and 19 turns that follow the real line and the real heights. The track has its kerbs, gravel, grandstands and pit buildings.</p>
+          <ul>
+            <li data-i18n>Tamburello, Tosa, Piratella, Acque Minerali, Variante Alta, Rivazza</li>
+            <li data-i18n>A lap timer shows this lap and keeps your best lap</li>
+            <li data-i18n>No cars on the track, and all riders lap the same way</li>
+          </ul>
+        </div>
+        <div class="frame shot clip"><video data-clip src="media/imola.mp4" poster="media/imola-poster.webp" muted loop playsinline preload="none" width="1280" height="720" aria-label="A ride over the start and finish line of the Imola circuit, between the grandstand and the pit buildings"></video><button class="pause" type="button" aria-pressed="true" aria-label="Play the video"><svg class="stop" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg><svg class="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg></button></div>
+      </div>
+
+      <div class="row flip">
+        <div class="text">
+          <h2 data-i18n>One lap from the route picker</h2>
+          <p data-i18n>Autodromo di Imola is one of the 16 routes: 4.9 km with 54 m of climb, ridden anticlockwise. In a free ride, turn off at Imola to reach the circuit.</p>
+        </div>
+        <img class="frame shot" loading="lazy" src="media/imola-map.webp" alt="The Imola circuit on the map of the route picker, with the start of the lap drawn in blue" width="710" height="560">
       </div>
     </div>
   </section>
 
   <section id="together">
     <div class="wrap">
+      <div class="row">
+        <div class="text">
+          <div class="kicker" data-i18n>Riders</div>
+          <h2 data-i18n>A peloton on every solo ride</h2>
+          <p data-i18n>On a solo ride, 8 to 16 other riders share the road. Each one holds a steady power. They pass you, you pass them, and they form small groups.</p>
+          <ul>
+            <li data-i18n>Sit on a wheel: drafting cuts your air drag by up to 12&nbsp;%</li>
+            <li data-i18n>Your rider follows your effort: aero on the flat, out of the saddle on steep climbs and in sprints</li>
+            <li data-i18n>Your rider has gestures too, such as putting on a vest</li>
+          </ul>
+        </div>
+        <div class="frame shot clip"><video data-clip src="media/peloton.mp4" poster="media/peloton-poster.webp" muted loop playsinline preload="none" width="1280" height="720" aria-label="A coast road above the sea: the rider catches a small group of other riders under the pine trees"></video><button class="pause" type="button" aria-pressed="true" aria-label="Play the video"><svg class="stop" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg><svg class="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg></button></div>
+      </div>
+
       <div class="row flip">
         <div class="text">
           <div class="kicker" data-i18n>Ride together</div>
           <h2 data-i18n>Group rides with a six-letter code</h2>
           <p data-i18n>Create a room, share the code and ride with up to ten friends. Keep-together holds the group in one bunch, so a stronger rider does not leave the others behind.</p>
         </div>
-        <img class="frame shot" loading="lazy" src="media/today.jpg" alt="The Today page: today's workout, the trainer and heart-rate connections, and the Ride together button" width="1600" height="1000" >
+        <img class="frame shot" loading="lazy" srcset="media/today-s.webp 720w, media/today.webp 1288w" sizes="(max-width: 900px) calc(100vw - 32px), 644px" src="media/today.webp" alt="The Today page: the workout of the day, the trainer and heart-rate connections, the road and workout choices, and the Ride together button" width="1288" height="805">
       </div>
 
       <div class="cards">
         <div class="card"><h3 data-i18n>FIT files for every app</h3><p data-i18n>Every ride saves a standard FIT file. Upload it to Strava, Garmin Connect or any training app.</p></div>
-        <div class="card"><h3 data-i18n>Training plans</h3><p data-i18n>Copy the prompt into ChatGPT, describe your goal, and import the plan it writes.</p></div>
+        <div class="card"><h3 data-i18n>Ride history</h3><p data-i18n>Open a saved ride and see its power zones and heart-rate zones.</p></div>
         <div class="card"><h3 data-i18n>ERG and slope</h3><p data-i18n>ERG mode holds your watts in a workout. In a free ride, the trainer follows the hills of the road.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="feedback" class="what">
+    <div class="wrap what-grid">
+      <div class="text">
+        <div class="kicker" data-i18n>Feedback</div>
+        <h2 data-i18n>An app built with its riders</h2>
+        <p data-i18n>Pannolato is an alpha. One maker builds it in Bologna and reads every message.</p>
+        <p data-i18n>Tell us what broke and what you miss. Your reports decide what we fix and what we build next.</p>
+        <div class="ctas" style="justify-content:flex-start"><a class="btn dark" href="mailto:pannolato.indoor@gmail.com?subject=Pannolato%20feedback" data-i18n>Send your feedback</a></div>
+      </div>
+      <div class="guide">
+        <img src="media/logo.png" alt="" width="96" height="96" loading="lazy">
+        <h3 data-i18n>What to put in your message</h3>
+        <ul>
+          <li data-i18n>The app version, from the bottom of Settings</li>
+          <li data-i18n>Your trainer model</li>
+          <li data-i18n>Your system: macOS or Windows</li>
+          <li data-i18n>What broke, with a screenshot</li>
+        </ul>
       </div>
     </div>
   </section>
@@ -448,7 +586,7 @@
       <details><summary data-i18n>Do I need an internet connection?</summary><p data-i18n>Not for workouts and solo rides. Group rides and uploads to Strava or Garmin need a connection. After the alpha, you need internet once to activate your licence.</p></details>
       <details><summary data-i18n>What will it cost?</summary><p data-i18n>The alpha is free. After the alpha we plan one payment per season, with a free trial first. There is no subscription.</p></details>
       <details><summary data-i18n>Where is my data?</summary><p data-i18n>On your computer only: <code>~/Library/Application Support/Pannolato</code> on macOS, <code>%APPDATA%\Pannolato</code> on Windows. There is no account and no cloud copy.</p></details>
-      <details><summary data-i18n>Which computers are supported?</summary><p data-i18n>Macs with Apple Silicon (M1 or newer) and 64-bit Windows PCs.</p></details>
+      <details><summary data-i18n>Which computers are supported?</summary><p data-i18n>Macs with Apple Silicon or Intel (macOS 11 or newer) and 64-bit Windows PCs.</p></details>
       <details><summary data-i18n>The trainer does not connect. What do I do?</summary><p data-i18n>Wake the trainer and close other apps that use it, such as Zwift or a phone. Check that Bluetooth is on. <a href="help.html#trainer">See all the steps</a>.</p></details>
       <details><summary data-i18n>Why do I need an access code?</summary><p data-i18n>The alpha is for a small group of testers. Enter your email in the <a href="#download">Try the alpha</a> section. We send the code to it. The app asks for the code once.</p></details>
     </div>
@@ -461,20 +599,29 @@
         <p data-i18n>Free during the alpha. The app is not signed yet, so your computer asks you to confirm the first time you open it.</p>
         <div class="ctas">
           <a class="btn primary" href="https://pannolato-relay.pannolato.workers.dev/dl/mac" data-i18n>Download for Mac</a>
+          <a class="btn primary" href="https://pannolato-relay.pannolato.workers.dev/dl/macintel" data-i18n>Download for Intel Mac</a>
           <a class="btn primary" href="https://pannolato-relay.pannolato.workers.dev/dl/win" data-i18n>Download for Windows</a>
         </div>
         <p data-i18n>Need an access code? Enter your email. We send the code to it.</p>
         <form class="access-form" id="access-form" method="post">
-          <input type="email" name="email" required autocomplete="email" placeholder="you@example.com" aria-label="Your email">
+          <label class="field"><span data-i18n>Your email</span><input type="email" name="email" required autocomplete="email" placeholder="you@example.com"></label>
           <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp">
           <button class="btn dark" type="submit" data-i18n>Send my access code</button>
           <p id="access-msg" role="status"></p>
+        </form>
+        <p data-i18n>No time to test now? Join the waitlist. We send you one email when the finished app is ready.</p>
+        <form class="access-form" id="wait-form" method="post">
+          <label class="field"><span data-i18n>Your email</span><input type="email" name="email" required autocomplete="email" placeholder="you@example.com"></label>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp">
+          <button class="btn dark" type="submit" data-i18n>Join the waitlist</button>
+          <p id="wait-msg" role="status"></p>
         </form>
         <div class="steps">
           <div data-i18n><b>macOS</b>Open the dmg and drag Pannolato to Applications. The first time, right-click the app and choose Open. If macOS still blocks it, choose Open Anyway in System Settings, Privacy &amp; Security.</div>
           <div data-i18n><b>Windows</b>Run the exe. If SmartScreen warns you, choose More info, then Run anyway.</div>
           <div data-i18n><b>Access code</b>The app asks for your access code once. If you do not have one, write to <a href="mailto:pannolato.indoor@gmail.com">pannolato.indoor@gmail.com</a>.</div>
           <div data-i18n><b>Problems?</b>Read the <a href="help.html">install and troubleshooting guide</a>.</div>
+          <div data-i18n><b>Feedback</b>Tell us what broke and what you miss: <a href="mailto:pannolato.indoor@gmail.com?subject=Pannolato%20feedback">pannolato.indoor@gmail.com</a>. Add the app version, your trainer model and your system. We read every message.</div>
         </div>
       </div>
     </div>
@@ -534,10 +681,6 @@
 "it": "I rulli, all'italiana",
 "es": "Ciclismo indoor, a la italiana"
 },
-"Ride Bologna and Emilia with Il Pannolato, your coach. Pick your road at every junction. One price per season, no subscription. It works offline, and your rides stay on your computer.": {
-"it": "Pedala tra Bologna e l'Emilia con Il Pannolato, il tuo coach. Scegli la tua strada a ogni bivio. Un prezzo a stagione, nessun abbonamento. Funziona offline e le tue uscite restano sul tuo computer.",
-"es": "Pedalea por Bolonia y Emilia con Il Pannolato, tu entrenador. Elige tu camino en cada bifurcación. Un precio por temporada, sin suscripción. Funciona sin conexión y tus salidas se quedan en tu ordenador."
-},
 "Download for Mac": {
 "it": "Scarica per Mac",
 "es": "Descargar para Mac"
@@ -546,9 +689,9 @@
 "it": "Scarica per Windows",
 "es": "Descargar para Windows"
 },
-"macOS needs Apple Silicon. You need an access code to start the alpha.": {
-"it": "Su macOS serve un Mac con Apple Silicon. Per avviare l'alpha ti serve un codice di accesso.",
-"es": "En macOS necesitas un Mac con Apple Silicon. Para abrir la alpha necesitas un código de acceso."
+"Intel Mac? Get the <a href=\"https://pannolato-relay.pannolato.workers.dev/dl/macintel\">Intel build</a>. You need an access code to start the alpha.": {
+"it": "Mac con Intel? Scarica la <a href=\"https://pannolato-relay.pannolato.workers.dev/dl/macintel\">versione Intel</a>. Per avviare l'alpha ti serve un codice di accesso.",
+"es": "¿Mac con Intel? Descarga la <a href=\"https://pannolato-relay.pannolato.workers.dev/dl/macintel\">versión Intel</a>. Para abrir la alpha necesitas un código de acceso."
 },
 "Simple to own. Simple to ride.": {
 "it": "Semplice da avere. Semplice da pedalare.",
@@ -650,10 +793,6 @@
 "it": "Collega un rullo smart e una fascia cardio via Bluetooth. Pannolato imposta la resistenza di ogni blocco in modalità ERG: tu pensa solo a pedalare.",
 "es": "Conecta un rodillo inteligente y una banda de pulso por Bluetooth. Pannolato fija la resistencia de cada bloque en modo ERG: tú solo pedaleas."
 },
-"A library of workouts: endurance, tempo, sweet spot, threshold, VO2max, sprints": {
-"it": "Una libreria di allenamenti: fondo, medio, sweet spot, soglia, VO2max, sprint",
-"es": "Una biblioteca de entrenamientos: fondo, tempo, sweet spot, umbral, VO2max, sprints"
-},
 "Build your own workout, or upload one as JSON": {
 "it": "Crea il tuo allenamento, o caricane uno in JSON",
 "es": "Crea tu propio entrenamiento o sube uno en JSON"
@@ -674,10 +813,6 @@
 "it": "Tutto quello che ti serve in una schermata",
 "es": "Todo lo que necesitas en una pantalla"
 },
-"Power, heart rate, cadence and speed sit at the top. The next steps, the climb ahead and your laps sit on the sides. A small coach cheers you on.": {
-"it": "Potenza, frequenza cardiaca, cadenza e velocità sono in alto. I prossimi blocchi, la salita in arrivo e i tuoi giri sono ai lati. Un piccolo coach ti fa il tifo.",
-"es": "Potencia, pulso, cadencia y velocidad están arriba. Los próximos bloques, la subida que viene y tus vueltas están a los lados. Un pequeño entrenador te anima."
-},
 "Speed comes from your power and the gradient of the road": {
 "it": "La velocità dipende dalla tua potenza e dalla pendenza della strada",
 "es": "La velocidad depende de tu potencia y de la pendiente de la carretera"
@@ -690,27 +825,9 @@
 "it": "Passa dalla vista del ciclista alla vista dall'alto della mappa",
 "es": "Cambia entre la vista del ciclista y la vista desde arriba del mapa"
 },
-"Bologna and Emilia, and you pick the road": {
-"it": "Bologna e l'Emilia, e la strada la scegli tu",
-"es": "Bolonia y Emilia, y el camino lo eliges tú"
-},
-"Start under the arcades of Bologna and climb to San Luca. Then choose your way: vineyard hills, the Apennines, deep woods, the river plain or the Adriatic coast.": {
-"it": "Parti sotto i portici di Bologna e sali a San Luca. Poi scegli la tua via: colline di vigneti, Appennino, boschi fitti, pianura del Reno o costa adriatica.",
-"es": "Sal bajo los soportales de Bolonia y sube a San Luca. Luego elige tu camino: colinas de viñedos, los Apeninos, bosques espesos, la llanura del Reno o la costa del Adriático."
-},
 "Bologna": {"it": "Bologna", "es": "Bolonia"},
 "San Luca": {"it": "San Luca", "es": "San Luca"},
-"River plain": {"it": "Pianura del Reno", "es": "Llanura del Reno"},
 "Apennines": {"it": "Appennino", "es": "Apeninos"},
-"Woods": {"it": "Boschi", "es": "Bosques"},
-"Ten areas, one map": {
-"it": "Dieci zone, una mappa",
-"es": "Diez zonas, un mapa"
-},
-"Bologna, San Luca, the Reno plain, the vineyard hills, the Apennines, woods, villages and the coast sit on one map. At each junction you choose where to go next.": {
-"it": "Bologna, San Luca, la pianura del Reno, le colline di vigneti, l'Appennino, i boschi, i borghi e la costa stanno su un'unica mappa. A ogni bivio scegli dove andare.",
-"es": "Bolonia, San Luca, la llanura del Reno, las colinas de viñedos, los Apeninos, los bosques, los pueblos y la costa están en un solo mapa. En cada bifurcación eliges adónde ir."
-},
 "Things happen on the road": {
 "it": "Per strada succede di tutto",
 "es": "En la carretera pasan cosas"
@@ -742,14 +859,6 @@
 "Every ride saves a standard FIT file. Upload it to Strava, Garmin Connect or any training app.": {
 "it": "Ogni uscita salva un file FIT standard. Caricalo su Strava, Garmin Connect o qualsiasi app di allenamento.",
 "es": "Cada salida guarda un archivo FIT estándar. Súbelo a Strava, Garmin Connect o cualquier app de entrenamiento."
-},
-"Training plans": {
-"it": "Piani di allenamento",
-"es": "Planes de entrenamiento"
-},
-"Copy the prompt into ChatGPT, describe your goal, and import the plan it writes.": {
-"it": "Copia il prompt in ChatGPT, descrivi il tuo obiettivo e importa il piano che scrive.",
-"es": "Copia el prompt en ChatGPT, describe tu objetivo e importa el plan que escribe."
 },
 "ERG and slope": {
 "it": "ERG e pendenza",
@@ -799,17 +908,29 @@
 "it": "Quali computer sono supportati?",
 "es": "¿Qué ordenadores son compatibles?"
 },
-"Macs with Apple Silicon (M1 or newer) and 64-bit Windows PCs.": {
-"it": "Mac con Apple Silicon (M1 o successivi) e PC Windows a 64 bit.",
-"es": "Mac con Apple Silicon (M1 o posterior) y PC con Windows de 64 bits."
+"Macs with Apple Silicon or Intel (macOS 11 or newer) and 64-bit Windows PCs.": {
+"it": "Mac con Apple Silicon o Intel (macOS 11 o successivi) e PC Windows a 64 bit.",
+"es": "Mac con Apple Silicon o Intel (macOS 11 o posterior) y PC con Windows de 64 bits."
 },
 "Why do I need an access code?": {
 "it": "Perché serve un codice di accesso?",
 "es": "¿Por qué necesito un código de acceso?"
 },
-"Enter your email in the <a href=\"#download\">Try the alpha</a> section. We send the code to it. The app asks for the code once.": {
-"it": "Inserisci la tua email nella sezione <a href=\"#download\">Prova l'alpha</a>. Ti inviamo il codice. L'app chiede il codice una sola volta.",
-"es": "Escribe tu correo en la sección <a href=\"#download\">Prueba la alpha</a>. Te enviamo el código. La app pide el código una sola vez."
+"Download for Intel Mac": {
+"it": "Scarica per Mac Intel",
+"es": "Descargar para Mac Intel"
+},
+"No time to test now? Join the waitlist. We send you one email when the finished app is ready.": {
+"it": "Non hai tempo di provarla adesso? Iscriviti alla lista d'attesa. Ti mandiamo una sola email quando l'app finita è pronta.",
+"es": "¿No tienes tiempo de probarla ahora? Apúntate a la lista de espera. Te enviamos un solo correo cuando la app final esté lista."
+},
+"Join the waitlist": {
+"it": "Iscrivimi alla lista d'attesa",
+"es": "Apúntame a la lista de espera"
+},
+"<b>Feedback</b>Tell us what broke and what you miss: <a href=\"mailto:pannolato.indoor@gmail.com?subject=Pannolato%20feedback\">pannolato.indoor@gmail.com</a>. Add the app version, your trainer model and your system. We read every message.": {
+"it": "<b>Feedback</b>Dicci cosa non funziona e cosa ti manca: <a href=\"mailto:pannolato.indoor@gmail.com?subject=Pannolato%20feedback\">pannolato.indoor@gmail.com</a>. Aggiungi la versione dell'app, il modello del rullo e il tuo sistema. Leggiamo ogni messaggio.",
+"es": "<b>Comentarios</b>Dinos qué falla y qué echas de menos: <a href=\"mailto:pannolato.indoor@gmail.com?subject=Pannolato%20feedback\">pannolato.indoor@gmail.com</a>. Añade la versión de la app, el modelo de tu rodillo y tu sistema. Leemos todos los mensajes."
 },
 "Need an access code? Enter your email. We send the code to it.": {
 "it": "Ti serve un codice di accesso? Inserisci la tua email. Ti inviamo il codice.",
@@ -826,10 +947,6 @@
 "Free during the alpha. The app is not signed yet, so your computer asks you to confirm the first time you open it.": {
 "it": "Gratis durante l'alpha. L'app non è ancora firmata, quindi la prima volta il computer ti chiede di confermare l'apertura.",
 "es": "Gratis durante la alpha. La app aún no está firmada, así que la primera vez tu ordenador te pide que confirmes al abrirla."
-},
-"<b>macOS</b>Open the dmg and drag Pannolato to Applications. The first time, right-click the app and choose Open.": {
-"it": "<b>macOS</b>Apri il dmg e trascina Pannolato in Applicazioni. La prima volta fai clic destro sull'app e scegli Apri.",
-"es": "<b>macOS</b>Abre el dmg y arrastra Pannolato a Aplicaciones. La primera vez, haz clic derecho en la app y elige Abrir."
 },
 "<b>Windows</b>Run the exe. If SmartScreen warns you, choose More info, then Run anyway.": {
 "it": "<b>Windows</b>Avvia l'exe. Se SmartScreen ti avvisa, scegli Ulteriori informazioni, poi Esegui comunque.",
@@ -849,6 +966,250 @@
 },
 "Privacy policy": {"it": "Informativa privacy", "es": "Política de privacidad"},
 "Terms of use": {"it": "Termini d'uso", "es": "Términos de uso"},
+"Routes": {
+"it": "Percorsi",
+"es": "Rutas"
+},
+"Feedback": {
+"it": "Feedback",
+"es": "Comentarios"
+},
+"Ride more than 190 km of road in Bologna and Emilia with Il Pannolato, your coach. Pick one of 16 routes, or choose your road at every junction. One price per season, no subscription. It works offline, and your rides stay on your computer.": {
+"it": "Pedala su oltre 190 km di strade tra Bologna e l'Emilia con Il Pannolato, il tuo coach. Scegli uno dei 16 percorsi, oppure la tua strada a ogni bivio. Un prezzo a stagione, nessun abbonamento. Funziona offline e le tue uscite restano sul tuo computer.",
+"es": "Pedalea por más de 190 km de carreteras entre Bolonia y Emilia con Il Pannolato, tu entrenador. Elige una de las 16 rutas, o tu camino en cada bifurcación. Un precio por temporada, sin suscripción. Funciona sin conexión y tus salidas se quedan en tu ordenador."
+},
+"70 library workouts, from recovery rides to VO2max and sprints": {
+"it": "70 allenamenti in libreria, dal recupero al VO2max e agli sprint",
+"es": "70 entrenamientos en la biblioteca, de la recuperación al VO2max y los sprints"
+},
+"Search by what you want: “short hard session”, “45 min endurance”, “climbing”": {
+"it": "Cerca per obiettivo: «seduta breve e dura», «45 min di fondo», «salita»",
+"es": "Busca por lo que quieres: «sesión corta y dura», «45 min de fondo», «subida»"
+},
+"Plan": {
+"it": "Piano",
+"es": "Plan"
+},
+"A training plan from six answers": {
+"it": "Un piano di allenamento da sei risposte",
+"es": "Un plan de entrenamiento con seis respuestas"
+},
+"Give Pannolato your goal, the weeks you have, the days you ride, the minutes per ride, your level and a start date. It builds a plan of 4, 6, 8 or 12 weeks from the workout library.": {
+"it": "Di' a Pannolato il tuo obiettivo, le settimane che hai, i giorni in cui pedali, i minuti per uscita, il tuo livello e la data di inizio. Pannolato crea un piano di 4, 6, 8 o 12 settimane con gli allenamenti della libreria.",
+"es": "Dile a Pannolato tu objetivo, las semanas que tienes, los días que ruedas, los minutos por salida, tu nivel y la fecha de inicio. Pannolato crea un plan de 4, 6, 8 o 12 semanas con los entrenamientos de la biblioteca."
+},
+"The Today page opens on the workout of the day": {
+"it": "La pagina Oggi si apre sull'allenamento del giorno",
+"es": "La página Hoy se abre con el entrenamiento del día"
+},
+"Busy day? Make it a rest day, or push the plan by one day": {
+"it": "Giornata piena? Trasformala in riposo, o sposta il piano di un giorno",
+"es": "¿Día ocupado? Conviértelo en descanso, o mueve el plan un día"
+},
+"The plan page shows your progress, the week you are in and the next session": {
+"it": "La pagina del piano mostra i tuoi progressi, la settimana in corso e la prossima seduta",
+"es": "La página del plan muestra tu progreso, la semana en curso y la próxima sesión"
+},
+"Or import a plan that ChatGPT writes from our prompt": {
+"it": "Oppure importa un piano che ChatGPT scrive con il nostro prompt",
+"es": "O importa un plan que ChatGPT escribe con nuestro prompt"
+},
+"Power, heart rate, cadence and speed sit at the top. The workout steps sit on the left. The mini-map, the climb ahead and your laps sit on the right. Il Pannolato comments from the corner.": {
+"it": "Potenza, frequenza cardiaca, cadenza e velocità sono in alto. I blocchi dell'allenamento sono a sinistra. La mini-mappa, la salita in arrivo e i tuoi giri sono a destra. Il Pannolato commenta dall'angolo.",
+"es": "Potencia, pulso, cadencia y velocidad están arriba. Los bloques del entrenamiento están a la izquierda. El minimapa, la subida que viene y tus vueltas están a la derecha. Il Pannolato comenta desde la esquina."
+},
+"16 routes, each with a map preview": {
+"it": "16 percorsi, ognuno con l'anteprima sulla mappa",
+"es": "16 rutas, cada una con vista previa en el mapa"
+},
+"Pick a loop before you ride. The route picker shows its distance and its climb, and draws it on the map.": {
+"it": "Scegli un anello prima di partire. Il selettore mostra distanza e dislivello, e disegna il percorso sulla mappa.",
+"es": "Elige un circuito antes de salir. El selector muestra la distancia y el desnivel, y dibuja la ruta en el mapa."
+},
+"Flat, hilly and mountain loops, from 4.9 km to 58.1 km": {
+"it": "Anelli di pianura, collina e montagna, da 4,9 km a 58,1 km",
+"es": "Circuitos llanos, de colinas y de montaña, de 4,9 km a 58,1 km"
+},
+"The Bologna ring roads, the Riviera, the Po delta, San Luca, the Futa pass, Sestola": {
+"it": "I viali di Bologna, la Riviera, il delta del Po, San Luca, il passo della Futa, Sestola",
+"es": "Las rondas de Bolonia, la Riviera, el delta del Po, San Luca, el puerto de la Futa, Sestola"
+},
+"Or start a free ride and choose your road at every junction": {
+"it": "Oppure parti in giro libero e scegli la strada a ogni bivio",
+"es": "O sal en salida libre y elige tu camino en cada bifurcación"
+},
+"Take another turn at any time: the ride goes on as a free ride": {
+"it": "Cambia strada quando vuoi: l'uscita continua come giro libero",
+"es": "Toma otro desvío cuando quieras: la salida sigue como salida libre"
+},
+"One map, from the Po to the Apennines": {
+"it": "Una mappa, dal Po all'Appennino",
+"es": "Un mapa, del Po a los Apeninos"
+},
+"The World page shows every road, 15 areas, 11 rivers and 2 lakes. The Po runs along the north edge and the Adriatic Sea along the east. During a ride, the mini-map shows where you are and how far the next fork is.": {
+"it": "La pagina Mondo mostra ogni strada, 15 zone, 11 fiumi e 2 laghi. Il Po corre lungo il bordo nord e il mare Adriatico lungo quello est. Durante l'uscita, la mini-mappa mostra dove sei e quanto manca al prossimo bivio.",
+"es": "La página Mundo muestra todas las carreteras, 15 zonas, 11 ríos y 2 lagos. El Po recorre el borde norte y el mar Adriático el borde este. Durante la salida, el minimapa muestra dónde estás y cuánto falta para la próxima bifurcación."
+},
+"Bologna and Emilia, town by town": {
+"it": "Bologna e l'Emilia, città per città",
+"es": "Bolonia y Emilia, ciudad por ciudad"
+},
+"Start under the arcades of Bologna and climb to San Luca. Ride through Modena, Ferrara, Imola and Rimini, follow the Adriatic coast, or climb into the Apennines.": {
+"it": "Parti sotto i portici di Bologna e sali a San Luca. Attraversa Modena, Ferrara, Imola e Rimini, segui la costa adriatica o sali sull'Appennino.",
+"es": "Sal bajo los soportales de Bolonia y sube a San Luca. Cruza Módena, Ferrara, Imola y Rímini, sigue la costa del Adriático o sube a los Apeninos."
+},
+"Adriatic coast": {
+"it": "Costa adriatica",
+"es": "Costa adriática"
+},
+"New light, water and road detail": {
+"it": "Nuova luce, acqua e dettagli della strada",
+"es": "Nueva luz, agua y detalle en la carretera"
+},
+"The world now has shade in its corners, haze in its valleys, and trees and water that move.": {
+"it": "Ora il mondo ha ombra negli angoli, foschia nelle valli, e alberi e acqua che si muovono.",
+"es": "Ahora el mundo tiene sombra en los rincones, bruma en los valles, y árboles y agua que se mueven."
+},
+"Baked ambient occlusion and soft shadows": {
+"it": "Occlusione ambientale precalcolata e ombre morbide",
+"es": "Oclusión ambiental precalculada y sombras suaves"
+},
+"Height fog, and one colour grade for the whole picture": {
+"it": "Nebbia in quota e un'unica correzione colore per tutta l'immagine",
+"es": "Niebla de altura y una sola corrección de color para toda la imagen"
+},
+"Trees and grass sway in the wind; rivers and canals ripple": {
+"it": "Alberi ed erba si muovono al vento; fiumi e canali si increspano",
+"es": "Los árboles y la hierba se mueven con el viento; los ríos y canales se rizan"
+},
+"Guardrails on tight bends, edge posts, and worn paint on the road": {
+"it": "Guardrail nelle curve strette, paracarri e segnaletica consumata sull'asfalto",
+"es": "Guardarraíles en las curvas cerradas, hitos de arcén y pintura gastada en el asfalto"
+},
+"The Imola circuit, built on surveyed track data": {
+"it": "Il circuito di Imola, costruito su dati rilevati della pista",
+"es": "El circuito de Imola, construido con datos medidos de la pista"
+},
+"Ride a lap of the Autodromo: 4.9 km and 19 turns that follow the real line and the real heights. The track has its kerbs, gravel, grandstands and pit buildings.": {
+"it": "Fai un giro dell'Autodromo: 4,9 km e 19 curve che seguono la traiettoria e le quote reali. La pista ha i suoi cordoli, la ghiaia, le tribune e i box.",
+"es": "Da una vuelta al Autodromo: 4,9 km y 19 curvas que siguen el trazado y las cotas reales. La pista tiene sus pianos, la grava, las tribunas y los boxes."
+},
+"Tamburello, Tosa, Piratella, Acque Minerali, Variante Alta, Rivazza": {
+"it": "Tamburello, Tosa, Piratella, Acque Minerali, Variante Alta, Rivazza",
+"es": "Tamburello, Tosa, Piratella, Acque Minerali, Variante Alta, Rivazza"
+},
+"A lap timer shows this lap and keeps your best lap": {
+"it": "Un cronometro mostra il giro in corso e conserva il tuo giro migliore",
+"es": "Un cronómetro muestra la vuelta en curso y guarda tu mejor vuelta"
+},
+"No cars on the track, and all riders lap the same way": {
+"it": "Niente auto in pista, e tutti i ciclisti girano nello stesso verso",
+"es": "Sin coches en la pista, y todos los ciclistas giran en el mismo sentido"
+},
+"One lap from the route picker": {
+"it": "Un giro dal selettore dei percorsi",
+"es": "Una vuelta desde el selector de rutas"
+},
+"Autodromo di Imola is one of the 16 routes: 4.9 km with 54 m of climb, ridden anticlockwise. In a free ride, turn off at Imola to reach the circuit.": {
+"it": "Autodromo di Imola è uno dei 16 percorsi: 4,9 km con 54 m di dislivello, in senso antiorario. In giro libero, svolta a Imola per raggiungere il circuito.",
+"es": "Autodromo di Imola es una de las 16 rutas: 4,9 km con 54 m de desnivel, en sentido antihorario. En salida libre, gira en Imola para llegar al circuito."
+},
+"Riders": {
+"it": "Ciclisti",
+"es": "Ciclistas"
+},
+"A peloton on every solo ride": {
+"it": "Un gruppo in ogni uscita da solo",
+"es": "Un pelotón en cada salida en solitario"
+},
+"On a solo ride, 8 to 16 other riders share the road. Each one holds a steady power. They pass you, you pass them, and they form small groups.": {
+"it": "Quando esci da solo, da 8 a 16 altri ciclisti sono sulla strada con te. Ognuno tiene una potenza costante. Ti superano, li superi, e formano piccoli gruppi.",
+"es": "En una salida en solitario, de 8 a 16 ciclistas comparten la carretera contigo. Cada uno mantiene una potencia constante. Te adelantan, los adelantas, y forman pequeños grupos."
+},
+"Sit on a wheel: drafting cuts your air drag by up to 12&nbsp;%": {
+"it": "Mettiti a ruota: la scia riduce la tua resistenza dell'aria fino al 12&nbsp;%",
+"es": "Ponte a rueda: el rebufo reduce tu resistencia al aire hasta un 12&nbsp;%"
+},
+"Your rider follows your effort: aero on the flat, out of the saddle on steep climbs and in sprints": {
+"it": "Il tuo ciclista segue il tuo sforzo: aerodinamico in pianura, fuorisella sulle salite ripide e negli sprint",
+"es": "Tu ciclista sigue tu esfuerzo: aerodinámico en llano, de pie en las subidas duras y en los sprints"
+},
+"Your rider has gestures too, such as putting on a vest": {
+"it": "Il tuo ciclista ha anche dei gesti, come infilarsi il gilet",
+"es": "Tu ciclista también tiene gestos, como ponerse el chaleco"
+},
+"Ride history": {
+"it": "Storico delle uscite",
+"es": "Historial de salidas"
+},
+"Open a saved ride and see its power zones and heart-rate zones.": {
+"it": "Apri un'uscita salvata e guarda le sue zone di potenza e di frequenza cardiaca.",
+"es": "Abre una salida guardada y mira sus zonas de potencia y de pulso."
+},
+"An app built with its riders": {
+"it": "Un'app costruita con chi la pedala",
+"es": "Una app hecha con quienes la ruedan"
+},
+"Pannolato is an alpha. One maker builds it in Bologna and reads every message.": {
+"it": "Pannolato è un'alpha. La sviluppa una sola persona, a Bologna, e legge ogni messaggio.",
+"es": "Pannolato es una alpha. La desarrolla una sola persona, en Bolonia, y lee todos los mensajes."
+},
+"Tell us what broke and what you miss. Your reports decide what we fix and what we build next.": {
+"it": "Dicci cosa non funziona e cosa ti manca. Le tue segnalazioni decidono cosa sistemiamo e cosa costruiamo dopo.",
+"es": "Dinos qué falla y qué echas de menos. Tus avisos deciden qué arreglamos y qué construimos después."
+},
+"Send your feedback": {
+"it": "Invia il tuo feedback",
+"es": "Envía tus comentarios"
+},
+"What to put in your message": {
+"it": "Cosa scrivere nel messaggio",
+"es": "Qué poner en tu mensaje"
+},
+"The app version, from the bottom of Settings": {
+"it": "La versione dell'app, in fondo alle Impostazioni",
+"es": "La versión de la app, al final de Ajustes"
+},
+"Your trainer model": {
+"it": "Il modello del tuo rullo",
+"es": "El modelo de tu rodillo"
+},
+"Your system: macOS or Windows": {
+"it": "Il tuo sistema: macOS o Windows",
+"es": "Tu sistema: macOS o Windows"
+},
+"What broke, with a screenshot": {
+"it": "Cosa non ha funzionato, con uno screenshot",
+"es": "Qué ha fallado, con una captura de pantalla"
+},
+"The trainer does not connect. What do I do?": {
+"it": "Il rullo non si collega. Cosa faccio?",
+"es": "El rodillo no se conecta. ¿Qué hago?"
+},
+"Wake the trainer and close other apps that use it, such as Zwift or a phone. Check that Bluetooth is on. <a href=\"help.html#trainer\">See all the steps</a>.": {
+"it": "Sveglia il rullo e chiudi le altre app che lo usano, come Zwift o un telefono. Controlla che il Bluetooth sia acceso. <a href=\"help.html#trainer\">Vedi tutti i passaggi</a>.",
+"es": "Despierta el rodillo y cierra las otras apps que lo usan, como Zwift o un teléfono. Comprueba que el Bluetooth está activado. <a href=\"help.html#trainer\">Ver todos los pasos</a>."
+},
+"The alpha is for a small group of testers. Enter your email in the <a href=\"#download\">Try the alpha</a> section. We send the code to it. The app asks for the code once.": {
+"it": "L'alpha è per un piccolo gruppo di tester. Inserisci la tua email nella sezione <a href=\"#download\">Prova l'alpha</a>. Ti inviamo il codice. L'app chiede il codice una sola volta.",
+"es": "La alpha es para un grupo pequeño de testers. Escribe tu correo en la sección <a href=\"#download\">Prueba la alpha</a>. Te enviamos el código. La app pide el código una sola vez."
+},
+"Your email": {
+"it": "La tua email",
+"es": "Tu correo"
+},
+"<b>macOS</b>Open the dmg and drag Pannolato to Applications. The first time, right-click the app and choose Open. If macOS still blocks it, choose Open Anyway in System Settings, Privacy &amp; Security.": {
+"it": "<b>macOS</b>Apri il dmg e trascina Pannolato in Applicazioni. La prima volta fai clic destro sull'app e scegli Apri. Se macOS la blocca ancora, scegli Apri comunque in Impostazioni di Sistema, Privacy e sicurezza.",
+"es": "<b>macOS</b>Abre el dmg y arrastra Pannolato a Aplicaciones. La primera vez, haz clic derecho en la app y elige Abrir. Si macOS la sigue bloqueando, elige Abrir igualmente en Ajustes del Sistema, Privacidad y seguridad."
+},
+"<b>Problems?</b>Read the <a href=\"help.html\">install and troubleshooting guide</a>.": {
+"it": "<b>Problemi?</b>Leggi la <a href=\"help.html\">guida all'installazione e alla risoluzione dei problemi</a>.",
+"es": "<b>¿Problemas?</b>Lee la <a href=\"help.html\">guía de instalación y solución de problemas</a>."
+},
+"Install and help": {
+"it": "Installazione e aiuto",
+"es": "Instalación y ayuda"
+},
 "Install guide and release notes": {
 "it": "Guida all'installazione e note di rilascio",
 "es": "Guía de instalación y notas de versión"
@@ -891,6 +1252,23 @@
   });
 })();
 </script>
+<script>
+// The hero clip plays on load. The other clips load and play on a click, so the page stays light.
+// Reduced motion: every clip rests on its poster.
+(() => {
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll("video[data-clip]").forEach((v) => {
+    const b = v.parentElement.querySelector(".pause");
+    const hold = (on) => {
+      if (on) v.pause(); else v.play().catch(() => {});
+      b.setAttribute("aria-pressed", String(on));
+      b.setAttribute("aria-label", on ? "Play the video" : "Pause the video");
+    };
+    b.addEventListener("click", () => hold(!v.paused));
+    hold(still || !v.autoplay);
+  });
+})();
+</script>
 <!-- Cloudflare Web Analytics: cookieless page-view stats (privacy policy, section 3). -->
 <script>
 // Set after you deploy tools/access-code-mailer.gs as a web app (see the file header).
@@ -908,7 +1286,30 @@ document.getElementById("access-form").addEventListener("submit", async (e) => {
     msg.textContent = "Could not send. Write to pannolato.indoor@gmail.com.";
   }
 });
+document.getElementById("wait-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.currentTarget, msg = document.getElementById("wait-msg");
+  msg.textContent = "Sending...";
+  try {
+    const body = new URLSearchParams(new FormData(form));
+    body.set("lang", document.documentElement.lang);
+    const r = await fetch("https://pannolato-relay.pannolato.workers.dev/waitlist", { method: "POST", body });
+    if (!r.ok) throw new Error(String(r.status));
+    msg.textContent = "You are on the list. We write to you once, when the app is ready.";
+    form.reset();
+  } catch {
+    msg.textContent = "Could not send. Write to pannolato.indoor@gmail.com.";
+  }
+});
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "c6a4f3487c094c5e929aa57c2af24143"}'></script>
+<script>
+// Not on a local preview: the beacon has no site to report to there.
+if (!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && location.protocol !== "file:") {
+  const b = document.createElement("script");
+  b.type = "module"; b.src = "https://static.cloudflareinsights.com/beacon.min.js";
+  b.dataset.cfBeacon = '{"token": "c6a4f3487c094c5e929aa57c2af24143"}';
+  document.body.appendChild(b);
+}
+</script>
 </body>
 </html>

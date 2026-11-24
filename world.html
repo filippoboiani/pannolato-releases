@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <meta name="claude:viewport-fit-sides" content="cover">
 <title>Pannolato World Explained</title>
 <style>
@@ -146,8 +147,38 @@ footer { margin-top: 56px; font-size: 0.85rem; color: var(--muted); border-top: 
 .card svg .on-fill { fill: #ffffff; }
 .card svg .on-accent { fill: #111111; }
 
+/* Interactive widgets */
+.widget { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px; margin: 20px 0; min-width: 0; }
+.widget > .wt { font: 600 1rem "Space Grotesk", Inter, sans-serif; margin: 0 0 4px; }
+.widget > .wd { font-size: 0.88rem; color: var(--muted); margin: 0 0 14px; max-width: 70ch; }
+.ctl { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-bottom: 12px; font-size: 0.9rem; }
+.ctl label { color: var(--muted); }
+.ctl input[type="range"] { flex: 1 1 220px; accent-color: var(--accent); min-width: 0; }
+.ctl select, .ctl input[type="number"] { background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; font: inherit; }
+.ctl input[type="number"] { width: 96px; }
+.ctl input[type="checkbox"] { accent-color: var(--accent); }
+.btn { background: var(--ink); color: var(--bg); border: 0; border-radius: 6px; padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; transition: transform 0.15s ease, opacity 0.15s ease; }
+.btn:hover { transform: translateY(-1px); opacity: 0.9; }
+.btn:active { transform: translateY(0); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.out { font-variant-numeric: tabular-nums; font-size: 1rem; font-weight: 600; color: var(--ink); }
+.rule { position: relative; height: 34px; background: var(--track); border-radius: 6px; overflow: hidden; margin: 8px 0 4px; }
+.rule > i { position: absolute; top: 0; bottom: 0; display: block; }
+.rule .mk { position: absolute; top: -6px; bottom: -6px; width: 3px; margin-left: -1px; background: var(--ink); border-radius: 2px; }
+.rule-lbl { display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--muted); font-variant-numeric: tabular-nums; margin-bottom: 14px; }
+.state { display: inline-block; font-size: 0.82rem; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; margin-left: 6px; }
+.stat-line { display: flex; justify-content: space-between; gap: 12px; font-size: 0.9rem; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.stat-line:last-child { border-bottom: 0; }
+.stat-line span:first-child { color: var(--muted); }
+.stat-line span:last-child { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+.legend-sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.tally { margin-top: 12px; }
+
 @media (prefers-reduced-motion: no-preference) {
   .bar-fill { transition: width 0.6s ease; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
 }
 </style>
 
@@ -158,7 +189,7 @@ footer { margin-top: 56px; font-size: 0.85rem; color: var(--muted); border-top: 
   <h1>Pannolato World Explained</h1>
   <p class="lede">A road-cycling world that runs in the browser beside a smart trainer. The road is a graph built offline from a hand-made source. Scenery is generated per chunk from a seed. Big trees switch to cheaper models and then to impostors. Other riders and events run in one simulation.</p>
   <nav class="toc" aria-label="Sections">
-    <a href="#numbers">Numbers</a><a href="#view">The view</a><a href="#frame">Frame</a><a href="#systems">Systems</a><a href="#map">Map</a><a href="#terrain">Terrain</a><a href="#lod">Level of detail</a><a href="#budget">Budget</a><a href="#assets">Assets</a><a href="#agents">Agents</a><a href="#events">Events</a><a href="#gaps">Doc gaps</a>
+    <a href="#numbers">Numbers</a><a href="#view">The view</a><a href="#frame">Frame</a><a href="#systems">Systems</a><a href="#map">Map</a><a href="#terrain">Terrain</a><a href="#lod">Level of detail</a><a href="#budget">Budget</a><a href="#assets">Assets</a><a href="#agents">Agents</a><a href="#events">Events</a><a href="#engine">Three.js or engine</a><a href="#gaps">Doc gaps</a>
   </nav>
 </header>
 
@@ -407,6 +438,34 @@ footer { margin-top: 56px; font-size: 0.85rem; color: var(--muted); border-top: 
     </table>
   </div>
 
+  <div class="widget" id="w-chunk">
+    <p class="wt">Chunk level explorer</p>
+    <p class="wd">Set a chunk's distance from the camera focus and the level it had before. A chunk appears inside 350 m as near, or inside 750 m as mid. A near chunk stays near until 378 m (8 % past 350 m), so it does not flicker. A chunk in the scene is dropped beyond 900 m.</p>
+    <div class="ctl">
+      <label for="ch-d">Chunk distance</label>
+      <input type="range" id="ch-d" min="0" max="1000" step="1" value="360">
+      <span class="out" id="ch-out">360 m</span>
+    </div>
+    <div class="ctl">
+      <label for="ch-was">It was</label>
+      <select id="ch-was">
+        <option value="near">near</option>
+        <option value="mid" selected>mid</option>
+        <option value="drop">dropped</option>
+      </select>
+    </div>
+    <div class="rule" aria-hidden="true">
+      <i style="left:0%;width:35%;background:var(--blue)"></i>
+      <i style="left:35%;width:2.8%;background:var(--blue);opacity:0.35"></i>
+      <i style="left:37.8%;width:52.2%;background:var(--green)"></i>
+      <i style="left:90%;width:10%;background:var(--track);opacity:0.6"></i>
+      <span class="mk" id="ch-mk"></span>
+    </div>
+    <div class="rule-lbl"><span>0 m</span><span>350</span><span>378</span><span>750</span><span>900</span><span>1000 m</span></div>
+    <div class="stat-line"><span>Level now</span><span id="ch-level">-</span></div>
+    <div class="stat-line"><span>Rule that applied</span><span id="ch-rule" style="font-weight:400;color:var(--muted);text-align:right">-</span></div>
+  </div>
+
   <h3>Blob shadows and prop budget</h3>
   <p>The shadow pass draws only near casters. Small props such as rocks, bushes and fences cast no shadow. Blob shadows are a soft dark patch under nearby props, a cheap stand-in for a real shadow.</p>
   <div class="bars" role="img" aria-label="Caps: 1800 props per refill, 600 blob shadows, 14 other riders, 256 impostor quads">
@@ -415,6 +474,18 @@ footer { margin-top: 56px; font-size: 0.85rem; color: var(--muted); border-top: 
     <div class="bar-row"><span>impostor quads</span><div class="bar-track"><div class="bar-fill a" style="width:14.2%"></div></div><span class="bar-val">256 per mesh</span></div>
     <div class="bar-row"><span>other riders</span><div class="bar-track"><div class="bar-fill r" style="width:0.8%"></div></div><span class="bar-val">14 (max)</span></div>
     <div class="axis"><span>bar length is the cap, scaled to 1 800</span><span></span></div>
+  </div>
+  <div class="widget" id="w-props">
+    <p class="wt">Prop cap explorer</p>
+    <p class="wd">Each refill keeps the 1 800 nearest props that pass the rules, and drops the rest. Set how many props a window holds to see what gets cut.</p>
+    <div class="ctl">
+      <label for="pr-n">Props that pass the rules</label>
+      <input type="range" id="pr-n" min="0" max="3000" step="10" value="2200">
+      <span class="out" id="pr-out">2200</span>
+    </div>
+    <div class="bar-row"><span>drawn</span><div class="bar-track"><div class="bar-fill" id="pr-drawn" style="width:0%"></div></div><span class="bar-val" id="pr-drawn-v">-</span></div>
+    <div class="bar-row"><span>cut</span><div class="bar-track"><div class="bar-fill r" id="pr-cut" style="width:0%"></div></div><span class="bar-val" id="pr-cut-v">-</span></div>
+    <div class="axis"><span>0</span><span>1 800 cap</span><span>3 000</span></div>
   </div>
 </section>
 
@@ -467,6 +538,41 @@ footer { margin-top: 56px; font-size: 0.85rem; color: var(--muted); border-top: 
     </table>
   </div>
 
+  <div class="widget" id="w-lod">
+    <p class="wt">Level of detail explorer</p>
+    <p class="wd">Drag the distance. Each bar shows the band of one object. The shares below use the same smoothstep curves as the code: the full model fades out, the far model fades in, and the impostor takes over at its own distance.</p>
+    <div class="ctl">
+      <label for="lod-d">Distance from the camera focus</label>
+      <input type="range" id="lod-d" min="0" max="170" step="1" value="40">
+      <span class="out" id="lod-out">40 m</span>
+    </div>
+    <div class="rule-lbl"><span>Autumn tree</span><span>0 m to 170 m</span></div>
+    <div class="rule" id="lod-a" aria-hidden="true">
+      <i style="left:0%;width:19.41%;background:var(--blue)"></i>
+      <i style="left:19.41%;width:8.24%;background:var(--accent);opacity:0.7"></i>
+      <i style="left:27.65%;width:25.29%;background:var(--green)"></i>
+      <i style="left:52.94%;width:11.77%;background:var(--accent);opacity:0.7"></i>
+      <i style="left:64.71%;width:35.29%;background:var(--red)"></i>
+      <span class="mk"></span>
+    </div>
+    <div class="rule-lbl"><span>Giant fir</span><span>0 m to 170 m</span></div>
+    <div class="rule" id="lod-f" aria-hidden="true">
+      <i style="left:0%;width:19.41%;background:var(--blue)"></i>
+      <i style="left:19.41%;width:8.24%;background:var(--accent);opacity:0.7"></i>
+      <i style="left:27.65%;width:54.71%;background:var(--green)"></i>
+      <i style="left:82.35%;width:11.77%;background:var(--accent);opacity:0.7"></i>
+      <i style="left:94.12%;width:5.88%;background:var(--red)"></i>
+      <span class="mk"></span>
+    </div>
+    <div class="rule-lbl"><span>full model (blue) · dissolve (yellow) · far model (green) · impostor (red)</span><span></span></div>
+    <div class="stat-line"><span>Autumn tree: full model share</span><span id="a-full">-</span></div>
+    <div class="stat-line"><span>Autumn tree: far model share</span><span id="a-far">-</span></div>
+    <div class="stat-line"><span>Autumn tree: impostor share</span><span id="a-imp">-</span></div>
+    <div class="stat-line"><span>Giant fir: full model share</span><span id="f-full">-</span></div>
+    <div class="stat-line"><span>Giant fir: far model share</span><span id="f-far">-</span></div>
+    <div class="stat-line"><span>Giant fir: impostor share</span><span id="f-imp">-</span></div>
+  </div>
+
   <h3>Three techniques</h3>
   <ul class="clean">
     <li><b>Level of detail.</b> Each big tree has a cheaper model. Autumn trees and firs switch at fixed distances.</li>
@@ -517,6 +623,35 @@ footer { margin-top: 56px; font-size: 0.85rem; color: var(--muted); border-top: 
     <div class="axis"><span>0</span><span>4 M</span><span>8.3 M</span></div>
   </div>
   <p class="note">The scale is the square root of the budget over the screen's pixels. A 4K screen gets √(3.7 / 8.29) ≈ 0.67. The ratio is also capped at 1.5, so a Retina laptop does not render at 2×.</p>
+
+  <div class="widget" id="w-px">
+    <p class="wt">Pixel budget calculator</p>
+    <p class="wd">Enter the canvas size in CSS pixels and the screen's device pixel ratio. The renderer caps the ratio at 1.5, and lowers it further so that the pixels drawn stay within 3.7 M. Above 2.5 M rendered pixels, multisampling drops from 4× to 2×.</p>
+    <div class="ctl">
+      <label for="px-preset">Preset</label>
+      <select id="px-preset">
+        <option value="1280x720">1280 × 720</option>
+        <option value="1920x1080">1920 × 1080</option>
+        <option value="2560x1440" selected>2560 × 1440</option>
+        <option value="3840x2160">3840 × 2160</option>
+        <option value="custom">custom</option>
+      </select>
+      <label for="px-w">Width</label><input type="number" id="px-w" min="200" max="7680" step="10" value="2560">
+      <label for="px-h">Height</label><input type="number" id="px-h" min="200" max="4320" step="10" value="1440">
+      <label for="px-dpr">Device pixel ratio</label>
+      <select id="px-dpr">
+        <option value="1">1</option>
+        <option value="1.5">1.5</option>
+        <option value="2" selected>2</option>
+        <option value="3">3</option>
+      </select>
+    </div>
+    <div class="stat-line"><span>Pixel ratio used</span><span id="px-ratio">-</span></div>
+    <div class="stat-line"><span>Rendered pixels</span><span id="px-rendered">-</span></div>
+    <div class="stat-line"><span>Share of the 3.7 M budget</span><span id="px-share">-</span></div>
+    <div class="stat-line"><span>Multisampling</span><span id="px-msaa">-</span></div>
+    <div class="bar-row" style="margin-top:12px"><span>rendered</span><div class="bar-track"><div class="bar-fill" id="px-bar" style="width:0%"></div><div class="marker" style="left:100%"><span>3.7 M</span></div></div><span class="bar-val" id="px-bar-v">-</span></div>
+  </div>
 
   <h3>Triangles per frame</h3>
   <p>The target is 250 000 triangles per frame at 60 fps. These figures come from the docs. They were not measured for this page. Measure with <code>world.html?hud=1</code> before you use them.</p>
@@ -665,7 +800,62 @@ footer { margin-top: 56px; font-size: 0.85rem; color: var(--muted); border-top: 
     <span class="chip">delivery</span><span class="chip">scooter</span><span class="chip">ape</span><span class="chip">sheep</span>
     <span class="chip">ducks</span><span class="chip">cafe</span><span class="chip">photo stop</span><span class="chip">red light</span>
   </div>
+  <div class="widget" id="w-roll">
+    <p class="wt">Slot roller</p>
+    <p class="wd">Each click rolls slots with the weights above, where every kind is allowed. Watch the observed shares settle towards the expected ones. The roll is random in your browser and nothing is saved.</p>
+    <div class="ctl">
+      <button type="button" class="btn" id="roll-1">Roll 1 slot</button>
+      <button type="button" class="btn" id="roll-100">Roll 100 slots</button>
+      <button type="button" class="btn" id="roll-reset" style="background:transparent;color:var(--ink);border:1px solid var(--line)">Reset</button>
+      <span class="out" id="roll-n" aria-live="polite">0 slots</span>
+    </div>
+    <div id="roll-rows"></div>
+  </div>
+
   <p>You can force one event with <code>world.html?event=&lt;kind&gt;</code>.</p>
+</section>
+
+<section id="engine">
+  <div class="label">Choice of tools</div>
+  <h2>Why Three.js and not a game engine</h2>
+  <p>Three.js is a renderer. It draws triangles and gives you the GPU objects. It has no physics, no audio and no scene editor. A game engine ships all of those. We chose the renderer because the hard parts of this world are ours anyway, and an engine would only add parts we do not use.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Option</th><th>What it is</th><th>Built-in physics</th><th>Visual editor</th><th>Control of road shader and chunks</th><th>Cost for this code</th></tr></thead>
+      <tbody>
+        <tr><td><b>Three.js</b> (ours)</td><td>renderer library</td><td>no</td><td>no</td><td>full: we write the shaders and the streaming</td><td>none, this is the current code</td></tr>
+        <tr><td><b>Babylon.js</b></td><td>full web engine</td><td>yes</td><td>yes: inspector, node material editor</td><td>good, but its own API</td><td>rewrite of <code>app/src/world</code></td></tr>
+        <tr><td><b>PlayCanvas</b></td><td>web engine with a cloud editor</td><td>yes</td><td>yes, in the browser</td><td>good, inside its pipeline</td><td>rewrite, and a lock-in to its editor and format</td></tr>
+        <tr><td><b>Unity, Unreal, Godot</b></td><td>game engines with desktop editors</td><td>yes</td><td>yes</td><td>limited by the engine's web export</td><td>rewrite, a large web build, and weaker control of the web parts</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="widget" id="w-engine">
+    <p class="wt">Which tool fits your needs</p>
+    <p class="wd">Tick the needs this project has. The verdict follows the rule used in the discussion behind this page: change tool only when a need is one that Three.js does not cover and we would have to build by hand.</p>
+    <div class="ctl" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <label><input type="checkbox" id="n-phys"> Heavy physics (ragdolls, vehicles, collisions between many bodies)</label>
+      <label><input type="checkbox" id="n-edit"> A visual scene editor for people who do not write code</label>
+      <label><input type="checkbox" id="n-multi"> Multiplayer state beyond the group ride relay</label>
+      <label><input type="checkbox" id="n-shader"> Full control of our own shaders, instancing and chunk streaming</label>
+      <label><input type="checkbox" id="n-small"> A small web bundle that loads fast on a phone</label>
+    </div>
+    <div class="stat-line"><span>Verdict</span><span id="eng-verdict" style="text-align:right;font-weight:600">Stay on Three.js</span></div>
+    <p class="cap" id="eng-why" style="margin-top:10px"></p>
+  </div>
+
+  <h3>What we already have</h3>
+  <ul class="clean">
+    <li>A frame budget and draw-call control: props are instanced, with one draw call per kind and material.</li>
+    <li>A pure rules layer with no renderer in it: <code>road/</code> and <code>agents/</code> are unit-tested without three.js.</li>
+    <li>Our own level of detail, chunk streaming and impostors, written for this road.</li>
+    <li>Our own map editor and build tools, so an engine's editor would add little.</li>
+  </ul>
+  <h3>When to reconsider</h3>
+  <p>Reconsider only if the project needs heavy physics, multiplayer rules beyond the relay, or a scene editor for non-programmers. Until then, a switch costs a rewrite of the world code and gives little back.</p>
+  <p class="note">Source: the earlier chat "3D performance guidelines and game engines" (16 November 2026). The engine claims there were not checked against the engines' own documents. Treat the table as a starting point, and check current versions before a decision.</p>
 </section>
 
 <section id="gaps">
@@ -683,5 +873,152 @@ footer { margin-top: 56px; font-size: 0.85rem; color: var(--muted); border-top: 
 <footer>
   <p>Figures come from <code>app/src/world/road/routes/map.json</code>, the code, and the project docs, as read on 16 November 2026. Triangle figures are from the docs. Diagrams are simplified and not to scale unless noted.</p>
 </footer>
+
+<script>
+(function () {
+  "use strict";
+  // Same curve as the code: smoothstep over [a, b].
+  var sm = function (a, b, x) { var t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  var $ = function (id) { return document.getElementById(id); };
+  var pc = function (v) { return (v * 100).toFixed(1) + " %"; };
+
+  // ---- Level of detail
+  function lod() {
+    var d = +$("lod-d").value;
+    $("lod-out").textContent = d + " m";
+    var farA = sm(33, 47, d), impA = sm(90, 110, d);
+    $("a-full").textContent = pc(1 - farA);
+    $("a-far").textContent = pc(farA * (1 - impA));
+    $("a-imp").textContent = pc(farA * impA);
+    var farF = sm(33, 47, d), impF = sm(140, 160, d);
+    $("f-full").textContent = pc(1 - farF);
+    $("f-far").textContent = pc(farF * (1 - impF));
+    $("f-imp").textContent = pc(farF * impF);
+    var left = (d / 170 * 100) + "%";
+    $("lod-a").querySelector(".mk").style.left = left;
+    $("lod-f").querySelector(".mk").style.left = left;
+  }
+
+  // ---- Chunk levels with hysteresis
+  function chunk() {
+    var d = +$("ch-d").value, was = $("ch-was").value, level, rule;
+    $("ch-out").textContent = d + " m";
+    if (was === "near") {
+      if (d > 900) { level = "dropped"; rule = "in the scene and beyond 900 m"; }
+      else if (d < 378) { level = "near"; rule = "was near, still inside 378 m"; }
+      else { level = "mid"; rule = "was near, now past 378 m"; }
+    } else if (was === "mid") {
+      if (d > 900) { level = "dropped"; rule = "in the scene and beyond 900 m"; }
+      else if (d < 350) { level = "near"; rule = "was mid, now inside 350 m"; }
+      else { level = "mid"; rule = "was mid, between 350 m and 900 m"; }
+    } else {
+      if (d > 750) { level = "dropped"; rule = "not in the scene, beyond 750 m: not added"; }
+      else if (d < 350) { level = "near"; rule = "new chunk, inside 350 m"; }
+      else { level = "mid"; rule = "new chunk, between 350 m and 750 m"; }
+    }
+    $("ch-level").textContent = level;
+    $("ch-rule").textContent = rule;
+    $("ch-mk").style.left = (d / 1000 * 100) + "%";
+  }
+
+  // ---- Prop cap
+  function props() {
+    var n = +$("pr-n").value, drawn = Math.min(n, 1800), cut = n - drawn;
+    $("pr-out").textContent = n;
+    $("pr-drawn").style.width = (drawn / 3000 * 100) + "%";
+    $("pr-cut").style.width = (cut / 3000 * 100) + "%";
+    $("pr-drawn-v").textContent = drawn + " drawn";
+    $("pr-cut-v").textContent = cut + " cut";
+  }
+
+  // ---- Pixel budget
+  var PRESETS = { "1280x720": [1280, 720], "1920x1080": [1920, 1080], "2560x1440": [2560, 1440], "3840x2160": [3840, 2160] };
+  function px() {
+    var w = +$("px-w").value, h = +$("px-h").value, dpr = +$("px-dpr").value;
+    if (!(w > 0 && h > 0)) return;
+    var fit = Math.sqrt(3700000 / (w * h));
+    var ratio = Math.max(0.5, Math.min(1.5, dpr, fit));
+    var rendered = w * h * ratio * ratio;
+    var share = rendered / 3700000 * 100;
+    $("px-ratio").textContent = ratio.toFixed(2);
+    $("px-rendered").textContent = Math.round(rendered).toLocaleString("en-US") + " px";
+    $("px-share").textContent = share.toFixed(0) + " %";
+    $("px-msaa").textContent = rendered > 2500000 ? "2× (above 2.5 M)" : "4×";
+    $("px-bar").style.width = Math.min(100, share) + "%";
+    $("px-bar-v").textContent = (rendered / 1000000).toFixed(2) + " M";
+  }
+  $("px-preset").addEventListener("change", function () {
+    var p = PRESETS[this.value];
+    if (p) { $("px-w").value = p[0]; $("px-h").value = p[1]; }
+    px();
+  });
+  ["px-w", "px-h"].forEach(function (id) {
+    $(id).addEventListener("input", function () {
+      var w = $("px-w").value, h = $("px-h").value, key = w + "x" + h;
+      $("px-preset").value = PRESETS[key] ? key : "custom";
+      px();
+    });
+  });
+  $("px-dpr").addEventListener("change", px);
+
+  // ---- Event slot roller (weights from events.ts; every kind allowed)
+  var K = [["car-pass", 6], ["overtake", 3], ["honk", 2], ["reckless", 0.3], ["tractor", 0.3], ["fans", 0.3], ["wheel-sucker", 0.3], ["delivery", 0.3], ["scooter", 0.3], ["ape", 0.3], ["dog", 0.3], ["sheep", 0.3], ["ducks", 0.3], ["cafe", 0.3], ["photo-stop", 0.3], ["red-light", 0.3]];
+  var TOTAL = K.reduce(function (s, k) { return s + k[1]; }, 0);
+  var counts = {}, slots = 0;
+  K.forEach(function (k) { counts[k[0]] = 0; });
+  function pick() {
+    var r = Math.random() * TOTAL;
+    for (var i = 0; i < K.length; i++) { r -= K[i][1]; if (r < 0) return K[i][0]; }
+    return K[K.length - 1][0];
+  }
+  function drawRolls() {
+    var html = "";
+    K.forEach(function (k) {
+      var exp = k[1] / TOTAL, obs = slots ? counts[k[0]] / slots : 0;
+      html += '<div class="bar-row"><span>' + k[0] + '</span><div class="bar-track">' +
+        '<div class="bar-fill" style="width:' + Math.min(100, obs / 0.5 * 100) + '%"></div>' +
+        '<div class="marker" style="left:' + Math.min(100, exp / 0.5 * 100) + '%"></div></div>' +
+        '<span class="bar-val">' + (obs * 100).toFixed(1) + ' % · expected ' + (exp * 100).toFixed(1) + ' %</span></div>';
+    });
+    $("roll-rows").innerHTML = html + '<div class="axis"><span>0 %</span><span>25 %</span><span>50 %</span></div>';
+    $("roll-n").textContent = slots + (slots === 1 ? " slot" : " slots");
+  }
+  function roll(n) { for (var i = 0; i < n; i++) { counts[pick()]++; slots++; } drawRolls(); }
+  $("roll-1").addEventListener("click", function () { roll(1); });
+  $("roll-100").addEventListener("click", function () { roll(100); });
+  $("roll-reset").addEventListener("click", function () {
+    K.forEach(function (k) { counts[k[0]] = 0; }); slots = 0; drawRolls();
+  });
+
+  // ---- Engine verdict
+  function engine() {
+    var phys = $("n-phys").checked, edit = $("n-edit").checked, multi = $("n-multi").checked;
+    var shader = $("n-shader").checked, small = $("n-small").checked;
+    var verdict, why;
+    if (phys || edit) {
+      verdict = "Consider an engine";
+      why = "Three.js has no physics and no scene editor. An engine gives them. The cost is a rewrite of app/src/world.";
+    } else {
+      verdict = "Stay on Three.js";
+      why = "Nothing you ticked needs an engine.";
+      var parts = [];
+      if (shader) parts.push("full control of shaders, instancing and streaming is what Three.js is for");
+      if (small) parts.push("a small bundle is a Three.js strength");
+      if (multi) parts.push("multiplayer state runs on the relay, not in the renderer, so an engine would not change it");
+      if (parts.length) why = "Three.js covers this: " + parts.join("; ") + ".";
+    }
+    $("eng-verdict").textContent = verdict;
+    $("eng-why").textContent = why;
+  }
+  ["n-phys", "n-edit", "n-multi", "n-shader", "n-small"].forEach(function (id) { $(id).addEventListener("change", engine); });
+
+  // ---- Wire up
+  $("lod-d").addEventListener("input", lod);
+  $("ch-d").addEventListener("input", chunk);
+  $("ch-was").addEventListener("change", chunk);
+  $("pr-n").addEventListener("input", props);
+  lod(); chunk(); props(); px(); drawRolls(); engine();
+})();
+</script>
 
 </div>
