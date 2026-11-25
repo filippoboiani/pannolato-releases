@@ -71,6 +71,12 @@
   .access-form input[type="email"] { padding: 12px 14px; font: inherit; border: 2px solid var(--ink); border-radius: 12px; }
   .access-form .hp { position: absolute; left: -9999px; }
   #access-msg:empty, #wait-msg:empty { display: none; }
+  .fb-note { font-size: 0.95rem; margin-top: 4px; }
+  .wl { max-width: 760px; margin-inline: auto; text-align: center; background: var(--white); border: 3px solid var(--ink-dark); border-radius: 22px; padding: 40px 28px 30px; box-shadow: 8px 10px 0 var(--print); }
+  .wl > p { color: var(--grey); max-width: 52ch; margin-inline: auto; }
+  .wl .wl-count { color: var(--ink-dark); margin-top: 0; }
+  .wl .wl-small { font-size: 0.9rem; margin-bottom: 0; }
+  #fb-msg { font-weight: 700; color: var(--ink-dark); }
   .btn:hover { transform: translate(1px, 2px); }
   .btn:active { transform: translate(2px, 4px); box-shadow: 1px 1px 0 var(--mustard-dark); }
   .btn.dark:active { box-shadow: 1px 1px 0 #8f93cf; }
@@ -148,6 +154,7 @@
   .m-enter [data-enter] > :nth-child(n+5) { animation-delay: 0.16s; }
   .field { display: flex; flex-direction: column; gap: 6px; flex: 1 1 240px; max-width: 360px; text-align: left; font-weight: 600; font-size: 0.9rem; color: #dfe3f5; }
   .field input { width: 100%; }
+  .wl .field { color: var(--ink-dark); }
 
   /* Easter egg: click the logo three times. A reckless driver passes. */
   #egg { position: fixed; left: 0; bottom: 18px; z-index: 50; pointer-events: none; display: none; width: 190px; transform: translateX(-220px); }
@@ -347,6 +354,7 @@
         </a>
       </div>
       <p class="note" data-i18n>Intel Mac? Get the <a href="https://pannolato-relay.pannolato.workers.dev/dl/macintel">Intel build</a>. You need an access code to start the alpha.</p>
+        <p class="note"><a href="#waitlist" data-i18n>Not ready to test? Join the waitlist for the launch price.</a></p>
       </div>
       <button class="pause" type="button" aria-pressed="true" aria-label="Play the video"><svg class="stop" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg><svg class="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg></button>
     </div>
@@ -578,7 +586,8 @@
         <h2 data-i18n>An app built with its riders</h2>
         <p data-i18n>Pannolato is an alpha. One maker builds it in Bologna and reads every message.</p>
         <p data-i18n>Tell us what broke and what you miss. Your reports decide what we fix and what we build next.</p>
-        <div class="ctas" style="justify-content:flex-start"><a class="btn dark" href="mailto:pannolato.indoor@gmail.com?subject=Pannolato%20feedback" data-i18n>Send your feedback</a></div>
+        <div class="ctas" style="justify-content:flex-start"><a class="btn dark" id="fb-btn" href="mailto:pannolato.indoor@gmail.com?subject=Pannolato%20feedback" data-i18n>Send your feedback</a></div>
+        <p class="fb-note"><span data-i18n>No mail app on this computer? Write to <b>pannolato.indoor@gmail.com</b>. The button also copies the address.</span> <span id="fb-msg" role="status"></span></p>
       </div>
       <div class="guide">
         <img src="media/logo.png" alt="" width="96" height="96" loading="lazy">
@@ -608,6 +617,24 @@
     </div>
   </section>
 
+  <section id="waitlist">
+    <div class="wrap">
+      <div class="wl">
+        <div class="kicker" data-i18n>Waitlist</div>
+        <h2 data-i18n>Get the launch price first</h2>
+        <p data-i18n>The finished app comes in early 2027. Riders on the waitlist get the launch price before everyone else.</p>
+        <form class="access-form" id="wait-form" method="post">
+          <label class="field"><span data-i18n>Your email</span><input type="email" name="email" required autocomplete="email" placeholder="you@example.com"></label>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp">
+          <button class="btn dark" type="submit" data-i18n>Join the waitlist</button>
+          <p id="wait-msg" role="status"></p>
+        </form>
+        <p class="wl-count" id="wait-count" hidden><b id="wait-n"></b> <span data-i18n>riders are on the list.</span></p>
+        <p class="wl-small" data-i18n>At most one email per month: new roads, new features and the launch. To leave the list, write to <a href="mailto:pannolato.indoor@gmail.com">pannolato.indoor@gmail.com</a>.</p>
+      </div>
+    </div>
+  </section>
+
   <section id="download" class="download">
     <div class="panel">
       <div class="wrap">
@@ -624,13 +651,6 @@
           <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp">
           <button class="btn dark" type="submit" data-i18n>Send my access code</button>
           <p id="access-msg" role="status"></p>
-        </form>
-        <p data-i18n>No time to test now? Join the waitlist. We send you one email when the finished app is ready.</p>
-        <form class="access-form" id="wait-form" method="post">
-          <label class="field"><span data-i18n>Your email</span><input type="email" name="email" required autocomplete="email" placeholder="you@example.com"></label>
-          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp">
-          <button class="btn dark" type="submit" data-i18n>Join the waitlist</button>
-          <p id="wait-msg" role="status"></p>
         </form>
         <div class="steps">
           <div data-i18n><b>macOS</b>Open the dmg and drag Pannolato to Applications. The first time, right-click the app and choose Open. If macOS still blocks it, choose Open Anyway in System Settings, Privacy &amp; Security.</div>
@@ -944,9 +964,29 @@
 "it": "Scarica per Mac Intel",
 "es": "Descargar para Mac Intel"
 },
-"No time to test now? Join the waitlist. We send you one email when the finished app is ready.": {
-"it": "Non hai tempo di provarla adesso? Iscriviti alla lista d'attesa. Ti mandiamo una sola email quando l'app finita è pronta.",
-"es": "¿No tienes tiempo de probarla ahora? Apúntate a la lista de espera. Te enviamos un solo correo cuando la app final esté lista."
+"Waitlist": {
+"it": "Lista d'attesa",
+"es": "Lista de espera"
+},
+"Get the launch price first": {
+"it": "Il prezzo di lancio, prima degli altri",
+"es": "El precio de lanzamiento, antes que nadie"
+},
+"The finished app comes in early 2027. Riders on the waitlist get the launch price before everyone else.": {
+"it": "L'app finita arriva all'inizio del 2027. Chi è in lista d'attesa riceve il prezzo di lancio prima di tutti gli altri.",
+"es": "La app final llega a principios de 2027. Quien está en la lista de espera recibe el precio de lanzamiento antes que nadie."
+},
+"At most one email per month: new roads, new features and the launch. To leave the list, write to <a href=\"mailto:pannolato.indoor@gmail.com\">pannolato.indoor@gmail.com</a>.": {
+"it": "Al massimo una email al mese: nuove strade, nuove funzioni e il lancio. Per uscire dalla lista scrivi a <a href=\"mailto:pannolato.indoor@gmail.com\">pannolato.indoor@gmail.com</a>.",
+"es": "Como máximo un correo al mes: nuevas carreteras, nuevas funciones y el lanzamiento. Para salir de la lista escribe a <a href=\"mailto:pannolato.indoor@gmail.com\">pannolato.indoor@gmail.com</a>."
+},
+"riders are on the list.": {
+"it": "ciclisti sono in lista.",
+"es": "ciclistas están en la lista."
+},
+"Not ready to test? Join the waitlist for the launch price.": {
+"it": "Non vuoi provare l'alpha? Iscriviti alla lista d'attesa per il prezzo di lancio.",
+"es": "¿No quieres probar la alpha? Apúntate a la lista de espera para el precio de lanzamiento."
 },
 "Join the waitlist": {
 "it": "Iscrivimi alla lista d'attesa",
@@ -1182,6 +1222,10 @@
 "it": "Dicci cosa non funziona e cosa ti manca. Le tue segnalazioni decidono cosa sistemiamo e cosa costruiamo dopo.",
 "es": "Dinos qué falla y qué echas de menos. Tus avisos deciden qué arreglamos y qué construimos después."
 },
+"No mail app on this computer? Write to <b>pannolato.indoor@gmail.com</b>. The button also copies the address.": {
+"it": "Nessuna app di posta su questo computer? Scrivi a <b>pannolato.indoor@gmail.com</b>. Il pulsante copia anche l'indirizzo.",
+"es": "¿No hay app de correo en este ordenador? Escribe a <b>pannolato.indoor@gmail.com</b>. El botón también copia la dirección."
+},
 "Send your feedback": {
 "it": "Invia il tuo feedback",
 "es": "Envía tus comentarios"
@@ -1310,6 +1354,25 @@ document.getElementById("access-form").addEventListener("submit", async (e) => {
     msg.textContent = "Could not send. Write to pannolato.indoor@gmail.com.";
   }
 });
+// A mailto link does nothing on a computer with no mail app: the button also copies the address and says so.
+document.getElementById("fb-btn").addEventListener("click", () => {
+  const done = { en: "Address copied.", it: "Indirizzo copiato.", es: "Dirección copiada." };
+  // execCommand works in the click itself, with no permission question; the Clipboard API is the second try.
+  const t = Object.assign(document.createElement("textarea"), { value: "pannolato.indoor@gmail.com", readOnly: true });
+  t.style.cssText = "position:fixed;opacity:0";
+  document.body.append(t); t.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch {}
+  t.remove();
+  const say = () => { document.getElementById("fb-msg").textContent = done[document.documentElement.lang] ?? done.en; };
+  if (ok) say(); else navigator.clipboard?.writeText(t.value).then(say, () => {});
+});
+// The count shows only from 50 riders: a small number does not help.
+fetch("https://pannolato-relay.pannolato.workers.dev/waitlist/count").then((r) => r.json()).then((j) => {
+  if (!(j.count >= 50)) return;
+  document.getElementById("wait-n").textContent = j.count;
+  document.getElementById("wait-count").hidden = false;
+}).catch(() => {});
 document.getElementById("wait-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.currentTarget, msg = document.getElementById("wait-msg");
@@ -1319,7 +1382,7 @@ document.getElementById("wait-form").addEventListener("submit", async (e) => {
     body.set("lang", document.documentElement.lang);
     const r = await fetch("https://pannolato-relay.pannolato.workers.dev/waitlist", { method: "POST", body });
     if (!r.ok) throw new Error(String(r.status));
-    msg.textContent = "You are on the list. We write to you once, when the app is ready.";
+    msg.textContent = "You are on the list. We write to you when the launch price opens.";
     form.reset();
   } catch {
     msg.textContent = "Could not send. Write to pannolato.indoor@gmail.com.";
