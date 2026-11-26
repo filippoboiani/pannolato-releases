@@ -1,6 +1,8 @@
 # Pannolato 0.1.0-alpha.29
 
 Pannolato is an indoor cycling app. It controls your smart trainer and shows a 3D ride.
+Website: https://filippoboiani.github.io/pannolato-releases/
+
 This is an early test build. Expect bugs.
 
 ## Install
