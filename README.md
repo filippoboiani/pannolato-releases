@@ -1,4 +1,4 @@
-# Pannolato 0.1.0-alpha.29
+# Pannolato 0.1.0-alpha.30
 
 Pannolato is an indoor cycling app. It controls your smart trainer and shows a 3D ride.
 Website: https://filippoboiani.github.io/pannolato-releases/
@@ -8,9 +8,9 @@ This is an early test build. Expect bugs.
 ## Install
 
 1. Download the file for your system from the Releases page:
-   - macOS (Apple Silicon): `Pannolato-0.1.0-alpha.29-mac-arm64.dmg`
-   - macOS (Intel, macOS 11 or newer): `Pannolato-0.1.0-alpha.29-mac-x64.dmg`
-   - Windows: `Pannolato-0.1.0-alpha.29-win-x64.exe`
+   - macOS (Apple Silicon): `Pannolato-0.1.0-alpha.30-mac-arm64.dmg`
+   - macOS (Intel, macOS 11 or newer): `Pannolato-0.1.0-alpha.30-mac-x64.dmg`
+   - Windows: `Pannolato-0.1.0-alpha.30-win-x64.exe`
 2. The app is not signed yet. Your system shows a warning. This is normal.
    - macOS: open the dmg and drag Pannolato to Applications. Open the app once; macOS blocks it.
      Then open **System Settings > Privacy & Security**, scroll down and click **Open Anyway** next to Pannolato. Confirm. Do this once.
